@@ -5,13 +5,13 @@ public class CostItem {
     public int cateID;
     private String itemName;
     private Currency ecurrency;
-    private int price;
+    private double price;
     public String purchaseDate;
 
 
 
     public CostItem(int ItemID, int CateID, String ItemName, Currency eCurrency,
-                    int Price, String PurchaseDate) {
+                    double Price, String PurchaseDate) {
         this.itemID = ItemID ;
         this.cateID = CateID;
         this.itemName = ItemName;
@@ -59,11 +59,11 @@ public class CostItem {
         this.ecurrency = ecurrency;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
