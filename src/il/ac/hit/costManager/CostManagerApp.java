@@ -8,8 +8,6 @@ import il.ac.hit.costManager.view.View;
 import il.ac.hit.costManager.viewmodel.IViewModel;
 import il.ac.hit.costManager.viewmodel.ViewModel;
 
-import javax.swing.*;
-
 public class CostManagerApp {
 
     public static void main(String args[]) {

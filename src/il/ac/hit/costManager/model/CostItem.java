@@ -11,7 +11,7 @@ public class CostItem {
 
 
     public CostItem(int ItemID, int CateID, String ItemName, Currency eCurrency,
-                    double Price, String PurchaseDate) {
+         double Price, String PurchaseDate) {
         this.itemID = ItemID ;
         this.cateID = CateID;
         this.itemName = ItemName;
@@ -73,6 +73,16 @@ public class CostItem {
 
     public void setPurchaseDate(String purchaseDate) {
         this.purchaseDate = purchaseDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Cost Item:" +
+                "Item Name='" + itemName + '\'' +
+                ", Price=" + price +
+                ", Currency=" + ecurrency +
+                ", Purchase Date=" + purchaseDate +
+                ')';
     }
 }
 

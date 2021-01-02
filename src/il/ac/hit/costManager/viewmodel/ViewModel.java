@@ -35,7 +35,7 @@ public class ViewModel implements IViewModel {
             public void run() {
                 try {
                     model.addCostItem(item);
-                    view.showMessage("cost item was added successfully");
+                    view.showMessage("Cost item was added successfully");
                     CostItem[] items = model.getCostItems();
                     view.showItems(items);
                 } catch(CostManagerException e) {
@@ -46,3 +46,5 @@ public class ViewModel implements IViewModel {
 
     }
 }
+
+
