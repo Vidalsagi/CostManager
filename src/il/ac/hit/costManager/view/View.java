@@ -1,5 +1,6 @@
 package il.ac.hit.costManager.view;
 
+import il.ac.hit.costManager.model.Category;
 import il.ac.hit.costManager.model.CostItem;
 import il.ac.hit.costManager.model.CostManagerException;
 import il.ac.hit.costManager.model.Currency;
@@ -11,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 public class View implements IView {
 
@@ -23,13 +25,28 @@ public class View implements IView {
     }
 
     @Override
+    public void showMessageCate(String text) {
+        ui.showMessageCate(text);
+    }
+
+    @Override
     public void showMessage(String text) {
         ui.showMessage(text);
     }
 
     @Override
-    public void showItems(CostItem[] vec) {
-        ui.showItems(vec);
+    public void showItems(CostItem[] items) {
+        ui.showItems(items);
+    }
+
+    @Override
+    public void showCategories(Category[] categories) {
+        ui.showCategories(categories);
+    }
+
+    @Override
+    public void showMessageItemsLoaded(String message) {
+        ui.showMessageItemsLoaded(message);
     }
 
     public View() {
@@ -38,6 +55,7 @@ public class View implements IView {
             public void run() {
                 View.this.ui = new ApplicationUI();
                 View.this.ui.start();
+
             }
         });
     }
@@ -60,6 +78,7 @@ public class View implements IView {
         private JMenu mnFile;
         private JMenuItem mntmExit;
         private JMenuItem mntmCreatePieDiagram;
+        private JMenuItem mntmReport;
 
         private JTabbedPane tabbedPane;
 
@@ -68,10 +87,11 @@ public class View implements IView {
          */
         private JScrollPane categoriesMenu;
         private JTextArea textAreaCate;
-        //private JTable table1;
         private JTextField tfCategory;
         private JTextField categoryField;
         private JLabel lblCategoryName;
+        private JLabel imgCateBackground1;
+        private JLabel imgCateBackground2;
         private JButton btnAddCategory;
         private JButton btnDeleteCategory;
 
@@ -81,7 +101,6 @@ public class View implements IView {
 
         private JTextArea textAreaItems;
         private JScrollPane itemMenu;
-        //private JTable table2;
         private JLabel lblItemName;
         private JLabel lblCategory;
         private JLabel lblPrice;
@@ -95,9 +114,9 @@ public class View implements IView {
         private JTextField tfItemCateName;
         private JTextField tfItemPrice;
         private JTextField tfItemCurrency;
-        private JTextField purchase_Date_DD;
-        private JTextField purchase_Date_MM;
-        private JTextField purchase_Date_YYYY;
+        private JComboBox cbDDItems;
+        private JComboBox cbMMItems;
+        private JComboBox cbYYYYItems;
         private JComboBox comboCurrencyOptions;
         private JComboBox cateItemsMenuCombo;
 
@@ -122,11 +141,13 @@ public class View implements IView {
             mntmExit = new JMenuItem("Exit");
             //Add a buttom in the menu to create a pie chart
             mntmCreatePieDiagram = new JMenuItem("Create Pie Diagram.");
+            //Add a buttom in the menu to create a pie chart
+            mntmReport = new JMenuItem("Print Report");
 
             //create three panels
             /* PanelCate related (Categories) */
 
-            //Set the table in Summary tab
+            //Set the table in categories tab
             textAreaCate = new JTextArea();
             categoriesMenu = new JScrollPane(textAreaCate);
             //tableCate = new JTable();
@@ -135,13 +156,16 @@ public class View implements IView {
             lblCategoryName = new JLabel("Category");
             //In Categories This is the text field of category
             tfCategory = new JTextField();
-            ////In Categories set this is the field CategoryName
-            //categoryField = new JTextField();
 
-            //in summary tab this is the add button
+            //in categories tab this is the add button
             btnAddCategory = new JButton("Add");
-            //In summary tab this is the remove buttom
+            //In categories tab this is the remove buttom
             btnDeleteCategory = new JButton("Remove");
+
+            //In the categories tab add a background
+            imgCateBackground1 = new JLabel("");
+            //In the categories tab add a background2
+            imgCateBackground2 = new JLabel("");
 
             /* PanelItem related (Items) */
             //tableItem = new JTable();
@@ -151,15 +175,18 @@ public class View implements IView {
             itemMenu = new JScrollPane(textAreaItems);
 
             //In the items tab add field to add the DD to purchase date
-            purchase_Date_DD = new JTextField();
+            cbDDItems = new JComboBox();
+            //purchase_Date_DD = new JTextField();
             //in items tab set field "MM"
             //txtMm = new JTextField();
             //In the items tab add field to add the MM to purchase date
-            purchase_Date_MM = new JTextField();
+            cbMMItems = new JComboBox();
+            //purchase_Date_MM = new JTextField();
             //in items tab set field "YYYY"
             //txtYyyy = new JTextField();
             //In the items tab add field to add the YYYY to purchase date
-            purchase_Date_YYYY = new JTextField();
+            cbYYYYItems = new JComboBox();
+            //purchase_Date_YYYY = new JTextField();
             //in items tab set add field for item
             tfItemName = new JTextField();
             //In the Items tab add field to add categories
@@ -202,7 +229,8 @@ public class View implements IView {
             panelCate.add(tfCategory);                    //In Categories This is the text field of category
             panelCate.add(btnAddCategory);                //in Categories tab this is the add button
             panelCate.add(btnDeleteCategory);            //In Categories tab this is the remove buttom
-
+            panelCate.add(imgCateBackground1);            //In the Categories tab add a background
+            panelCate.add(imgCateBackground2);            //In the Categories tab add a background2
             panelMain.setLayout(new BorderLayout());
 
             //panel Items
@@ -213,34 +241,43 @@ public class View implements IView {
             panelItem.add(btnAddItems);            //in items tab add the buttom "add"
             panelItem.add(lblCategory);            //In the items tab add label "category"
             panelItem.add(tfItemCateName);        //In the Items tab add field to add categories
-            panelItem.add(lblPrice);            //In the items tab add label Price
+            panelItem.add(lblPrice);              //In the items tab add label Price
             panelItem.add(tfItemPrice);            //In the items tab add field to add price
             panelItem.add(lblCurrency);            //In the Items tab add label "Currency"
             panelItem.add(tfItemCurrency);        //In the items tab add field to add currency
-            panelItem.add(purchase_Date_DD);    //In the items tab add field to add the DD to purchase date
+            panelItem.add(cbMMItems);               //In the items tab add field to add the MM to purchase date
+            panelItem.add(cbDDItems);             //In the items tab add field to add the DD to purchase date
             panelItem.add(lblPurchaseDate);        //in the items tab add label "purchase date"
-            panelItem.add(purchase_Date_MM);    //In the items tab add field to add the MM to purchase date
-            panelItem.add(purchase_Date_YYYY);    //In the items tab add field to add the YYYY to purchase date
+            panelItem.add(cbYYYYItems);              //In the items tab add field to add the YYYY to purchase date
             panelItem.add(comboCurrencyOptions);
             panelItem.add(cateItemsMenuCombo);
-            //panel3.add(imgCostBackItems1);			//In the items tab add a background
-            //panel3.add(imgCostBackground);			//In the items tab add a background2
+            panelItem.add(imgCostBackItems1);            //In the items tab add a background
+            panelItem.add(imgCostBackground);            //In the items tab add a background2
 
             //general components
             menuBar.add(mnFile);
 
             //Create a panel
-            frame.setForeground(Color.BLACK);
-            frame.setBackground(Color.WHITE);
-            frame.setBounds(9, 9, 9, 9);
+            frame.setForeground(Color.BLUE);
+            frame.setBackground(Color.BLACK);
+            frame.setBounds(9, 9, 3, 12);
             frame.setContentPane(panelMain);
 
-            //Set the tabs of summary,categories,items on TOP
-            tabbedPane.setForeground(Color.WHITE);
+            //Set the tabs of items ,categories,items on TOP
+            tabbedPane.setForeground(Color.BLACK);
             tabbedPane.setBounds(0, 0, 1128, 459);
+            switch (tabbedPane.getSelectedIndex()) {
+                case 0:
+                    tabbedPane.setPreferredSize(new Dimension(1, 550));
+                    break;
+                case 1:
+                    tabbedPane.setPreferredSize(new Dimension(1, 330));
+                    break;
+            }
 
             //Set an icon for the Jframe
-            //frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\CostMangerIcon.png"));
+
+            frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\CostMangerIcon.png"));
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setBounds(100, 100, 1140, 534);
 
@@ -260,8 +297,13 @@ public class View implements IView {
             mntmCreatePieDiagram.setForeground(Color.BLACK);
             mntmCreatePieDiagram.setBackground(Color.WHITE);
 
+            //Add a buttom in the menu to create a pie chart
+            mntmReport.setForeground(Color.BLACK);
+            mntmReport.setBackground(Color.WHITE);
+
             //Add the buttons to mnFile
             mnFile.add(mntmCreatePieDiagram);
+            mnFile.add(mntmReport);
             mnFile.add(mntmExit);
 
             //Set the Categories panel
@@ -294,28 +336,40 @@ public class View implements IView {
 
 
             //in Categories tab this is the add button
-            btnAddCategory.setFont(new Font("Cooper Black", Font.PLAIN, 20));
-            btnAddCategory.setForeground(new Color(255, 255, 255));
-            btnAddCategory.setBounds(796, 387, 115, 29);
+            btnAddCategory.setFont(new Font("Cooper Black", Font.PLAIN, 30));
+            btnAddCategory.setForeground(new Color(0, 0, 0));
+            btnAddCategory.setBounds(743, 343, 157, 29);
             btnAddCategory.setOpaque(false);
             btnAddCategory.setContentAreaFilled(false);
 
             //In Categories tab this is the remove buttom
-            btnDeleteCategory.setFont(new Font("Cooper Black", Font.PLAIN, 20));
-            btnDeleteCategory.setForeground(new Color(255, 255, 255));
-            btnDeleteCategory.addActionListener(new ActionListener() { //Delete item
-                public void actionPerformed(ActionEvent arg0) {
-                    try {
-                        //This will remove an item
-                        System.out.println("Removed an item");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            btnDeleteCategory.setBounds(958, 387, 127, 29);
+            btnDeleteCategory.setFont(new Font("Cooper Black", Font.PLAIN, 30));
+            btnDeleteCategory.setForeground(new Color(0, 0, 0));
+            btnDeleteCategory.setBounds(933, 343, 157, 29);
             btnDeleteCategory.setOpaque(false);
             btnDeleteCategory.setContentAreaFilled(false);
+
+
+            //In the categories tab add a background
+            imgCateBackground1.setVerticalTextPosition(SwingConstants.BOTTOM);
+            imgCateBackground1.setVerticalAlignment(SwingConstants.BOTTOM);
+            imgCateBackground1.setLocation(new Point(50, 50));
+            imgCateBackground1.setHorizontalTextPosition(SwingConstants.CENTER);
+            imgCateBackground1.setFont(new Font("Cooper Black", Font.PLAIN, 19));
+            imgCateBackground1.setAlignmentX(0.5f);
+            imgCateBackground1.setBounds(391, -31, 1472, 549);
+            imgCateBackground1.setIcon(new ImageIcon("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\MoneyBackground.png"));
+
+            //In the categories tab add a background2
+            imgCateBackground2.setVerticalTextPosition(SwingConstants.BOTTOM);
+            imgCateBackground2.setVerticalAlignment(SwingConstants.BOTTOM);
+            imgCateBackground2.setLocation(new Point(50, 50));
+            imgCateBackground2.setHorizontalTextPosition(SwingConstants.CENTER);
+            imgCateBackground2.setFont(new Font("Cooper Black", Font.PLAIN, 19));
+            imgCateBackground2.setAlignmentX(0.5f);
+            imgCateBackground2.setBounds(-100, -29, 1472, 549);
+            imgCateBackground2.setIcon(new ImageIcon("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\MoneyBackground.png"));
+
 
             /**
              * panelItems
@@ -345,6 +399,7 @@ public class View implements IView {
             btnRemoveItems.setForeground(Color.BLACK);
             btnRemoveItems.setFont(new Font("Cooper Black", Font.PLAIN, 30));
             btnRemoveItems.setActionCommand("hidenRefreshButton3");
+            btnRemoveItems.setForeground(new Color(0, 0, 0));
             btnRemoveItems.setBounds(933, 343, 157, 29);
             btnRemoveItems.setBorderPainted(false);
 
@@ -359,6 +414,7 @@ public class View implements IView {
             btnAddItems.setContentAreaFilled(false);
             btnAddItems.setBorderPainted(false);
             btnAddItems.setBackground(Color.BLACK);
+            btnAddItems.setForeground(new Color(0, 0, 0));
             btnAddItems.setActionCommand("hidenRefreshButton3");
             btnAddItems.setBounds(743, 343, 157, 29);
 
@@ -388,11 +444,6 @@ public class View implements IView {
             lblCurrency.setBackground(Color.WHITE);
             lblCurrency.setBounds(744, 216, 125, 20);
 
-            //In the items tab add field to add the DD to purchase date
-            purchase_Date_DD.setText("  DD");
-            purchase_Date_DD.setColumns(10);
-            purchase_Date_DD.setBounds(936, 262, 39, 35);
-
             //in the items tab add label "purchase date"
             lblPurchaseDate.setOpaque(true);
             lblPurchaseDate.setForeground(Color.BLACK);
@@ -400,15 +451,24 @@ public class View implements IView {
             lblPurchaseDate.setBackground(Color.WHITE);
             lblPurchaseDate.setBounds(719, 277, 154, 20);
 
-            //In the items tab add field to add the MM to purchase date
-            purchase_Date_MM.setText("MM");
-            purchase_Date_MM.setColumns(10);
-            purchase_Date_MM.setBounds(985, 262, 39, 35);
+            cbDDItems.setForeground(Color.BLACK);
+            cbDDItems.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"}));
+            cbDDItems.setSelectedIndex(0);
+            cbDDItems.setBackground(Color.WHITE);
+            cbDDItems.setBounds(936, 262, 39, 35);
 
-            //In the items tab add field to add the YYYY to purchase date
-            purchase_Date_YYYY.setText("YYYY");
-            purchase_Date_YYYY.setColumns(10);
-            purchase_Date_YYYY.setBounds(1034, 262, 39, 35);
+
+            cbMMItems.setForeground(Color.BLACK);
+            cbMMItems.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}));
+            cbMMItems.setSelectedIndex(0);
+            cbDDItems.setBackground(Color.WHITE);
+            cbMMItems.setBounds(985, 262, 39, 35);
+
+            cbYYYYItems.setForeground(Color.BLACK);
+            cbYYYYItems.setModel(new DefaultComboBoxModel(new String[] {"1940", "1941", "1942", "1943", "1944", "1945", "1946", "1947", "1948", "1949", "1950", "1951", "1952", "1953", "1954", "1955", "1956", "1957", "1958", "1959", "1960", "1961", "1962", "1963", "1964", "1965", "1966", "1967", "1968", "1969", "1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"}));
+            cbYYYYItems.setSelectedIndex(0);
+            cbYYYYItems.setBackground(Color.WHITE);
+            cbYYYYItems.setBounds(1034, 262, 75, 35);
 
             //add in items tab currency combo box
             comboCurrencyOptions.setForeground(Color.BLACK);
@@ -422,14 +482,13 @@ public class View implements IView {
             tfItemCateName.setBackground(Color.WHITE);
             tfItemCateName.setBounds(936, 106, 154, 29);
 
-
-/*
+            /*
 			//add in items tab Categories comboBox
 			cateItemsMenuCombo.setForeground(Color.BLACK);
 			cateItemsMenuCombo.setBackground(Color.WHITE);
 			cateItemsMenuCombo.setBounds(936, 106, 154, 29);
+             */
 
- */
             //In the items tab add a background
             imgCostBackItems1.setVerticalTextPosition(SwingConstants.BOTTOM);
             imgCostBackItems1.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -438,7 +497,7 @@ public class View implements IView {
             imgCostBackItems1.setFont(new Font("Cooper Black", Font.PLAIN, 19));
             imgCostBackItems1.setAlignmentX(0.5f);
             imgCostBackItems1.setBounds(391, -31, 1472, 549);
-            //imgCostBackItems1.setIcon(new ImageIcon("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\MoneyBackground.png"));
+            imgCostBackItems1.setIcon(new ImageIcon("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\MoneyBackground.png"));
 
             //In the items tab add a background2
             imgCostBackground.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -447,8 +506,8 @@ public class View implements IView {
             imgCostBackground.setHorizontalTextPosition(SwingConstants.CENTER);
             imgCostBackground.setFont(new Font("Cooper Black", Font.PLAIN, 19));
             imgCostBackground.setAlignmentX(0.5f);
-            imgCostBackground.setBounds(382, -29, 1472, 549);
-            //imgCostBackground.setIcon(new ImageIcon("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\MoneyBackground.png"));
+            imgCostBackground.setBounds(-100, -29, 1472, 549);
+            imgCostBackground.setIcon(new ImageIcon("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\MoneyBackground.png"));
 
 
             //setting the window layout manager
@@ -489,6 +548,18 @@ public class View implements IView {
                     System.out.println("Creates a pie chart.");
                 }
             });
+
+
+            //handling the button Print Report in menu
+            mntmReport.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    //Open the report window
+                    getReportMenu report = new getReportMenu();
+                    report.frame.setVisible(true);
+                    System.out.println("Report was created");
+                }
+            });
             //handling cost item adding button click on items tab
             btnAddItems.addActionListener(new ActionListener() {
                 @Override
@@ -527,8 +598,8 @@ public class View implements IView {
                         }
                         int cateID = 0;
                         //add purchase date
-                        String purchaseDate = purchase_Date_DD.getText() + "." + purchase_Date_MM.getText()
-                                + "." + purchase_Date_YYYY.getText();
+                        String purchaseDate = cbDDItems.getSelectedItem().toString() + "." + cbMMItems.getSelectedItem().toString()
+                                + "." + cbYYYYItems.getSelectedItem().toString() ;
                         CostItem item = new CostItem(itemID, cateID, itemName, currency,
                                 sum, purchaseDate);
                         vm.addCostItem(item);
@@ -537,6 +608,101 @@ public class View implements IView {
                         View.this.showMessage("problem with entered sum... " + ex.getMessage());
                     } catch (CostManagerException ex) {
                         View.this.showMessage("problem with entered data... problem with description... " + ex.getMessage());
+                    }
+                }
+            });
+            //handling cost item delete button click on items tab
+            btnRemoveItems.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        String itemName = tfItemName.getText();
+                        if (itemName == null || itemName.length() == 0) {
+                            throw new CostManagerException("Item name cannot be empty");
+                        }
+                        //generate itemID
+                        int itemID = 0;
+                        //get price
+                        double sum = Double.parseDouble(tfItemPrice.getText());
+                        String chosenCurrency = comboCurrencyOptions.getSelectedItem().toString();
+                        //get currency
+                        Currency currency = null;
+                        switch (chosenCurrency) {
+                            case "EUR":
+                                currency = Currency.EURO;
+                                break;
+                            case "ILS":
+                                currency = Currency.ILS;
+                                break;
+                            case "GBP":
+                                currency = Currency.GBP;
+                                break;
+                            default:
+                                currency = Currency.USD;
+
+                        }
+                        //get category name
+                        String categoryName = tfItemCateName.getText();
+                        //get category ID
+                        if (categoryName == null || categoryName.length() == 0) {
+                            throw new CostManagerException("Category name cannot be empty");
+                        }
+                        int cateID = 0;
+                        //add purchase date
+                        String purchaseDate = cbDDItems.getSelectedItem().toString() + "." + cbMMItems.getSelectedItem().toString()
+                                + "." + cbYYYYItems.getSelectedItem().toString() ;
+                        CostItem item = new CostItem(itemID, cateID, itemName, currency,
+                                sum, purchaseDate);
+                        vm.deleteCostItem(item);
+
+                    } catch (NumberFormatException ex) {
+                        View.this.showMessage("problem with entered sum... " + ex.getMessage());
+                    } catch (CostManagerException ex) {
+                        View.this.showMessage("problem with entered data... problem with description... " + ex.getMessage());
+                    }
+                }
+            });
+            //handling category adding button click on items tab
+            btnAddCategory.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        //get category name
+                        String cateName = tfCategory.getText();
+                        if (cateName == null || cateName.length() == 0) {
+                            throw new CostManagerException("Category name cannot be empty");
+                        }
+                        //get category ID
+                        int cateID = 0;
+                        Category category = new Category(cateID, cateName);
+                        vm.addCategory(category);
+
+                    } catch (NumberFormatException ex) {
+                        View.this.showMessageCate("problem with entered ID... " + ex.getMessage());
+                    } catch (CostManagerException ex) {
+                        View.this.showMessageCate("problem with entered data... problem with description... " + ex.getMessage());
+                    }
+                }
+            });
+            //handling category adding button click on items tab
+            btnDeleteCategory.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        //get category name
+                        String cateName = tfCategory.getText();
+                        if (cateName == null || cateName.length() == 0) {
+                            throw new CostManagerException("Category name cannot be empty");
+                        }
+                        //get category ID
+                        int cateID = 0;
+                        Category category = new Category(cateID, cateName);
+                        vm.deleteCategory(category);
+
+                    } catch (NumberFormatException ex) {
+                        View.this.showMessageCate("problem with entered ID... " + ex.getMessage());
+                    } catch (CostManagerException ex) {
+                        View.this.showMessageCate("problem with entered data... problem with description... " + ex.getMessage());
                     }
                 }
             });
@@ -555,6 +721,24 @@ public class View implements IView {
                     public void run() {
                         textAreaItems.setText(text);
                     }
+                });
+            }
+            //@Override
+            //public void setViewModel(IViewModel vm) {
+            //
+            //}
+        }
+
+        public void showMessageCate(String text) {
+            if (SwingUtilities.isEventDispatchThread()) {
+                textAreaCate.setText(text);
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        textAreaCate.setText(text);
+                    }
+
                 });
 
             }
@@ -584,6 +768,42 @@ public class View implements IView {
 
             }
 
+        }
+
+        public void showCategories(Category[] categories) {
+            StringBuilder sb = new StringBuilder();
+            for (Category category : categories) {
+                sb.append(category.toString());
+                sb.append("\n");
+            }
+            String text = sb.toString();
+
+            if (SwingUtilities.isEventDispatchThread()) {
+                textAreaCate.setText(text);
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        textAreaCate.setText(text);
+                    }
+                });
+
+            }
+
+        }
+
+        public void showMessageItemsLoaded(String message) {
+            if (SwingUtilities.isEventDispatchThread()) {
+                textAreaItems.setText(message);
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        textAreaItems.setText(message);
+                    }
+
+                });
+            }
         }
     }
 }

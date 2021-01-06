@@ -36,6 +36,6 @@ public class Category {
 
     @Override//in DBConnector
     public String toString() {
-        return "Category [ID=" + categoryID + ", Username=" + categoryName + "]";
+        return "Category [ID=" + categoryID + ", CategoryName=" + categoryName + "]";
     }
 }

@@ -8,6 +8,9 @@ public class DerbyDBModel implements IModel {
     public static String driver = "org.apache.derby.jdbc.ClientDriver";
     public static String protocol = "jdbc:derby://localhost:1527/CostManager;create=true";
 
+    private List<CostItem> items = new LinkedList<CostItem>();
+    private List<Category> categories = new LinkedList<Category>();
+
     public DerbyDBModel() throws CostManagerException {
         try {
             Class.forName(driver);
@@ -138,7 +141,6 @@ public class DerbyDBModel implements IModel {
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
             //=========== Run a code to check if CateDB exsists =============
-
             //statement.execute("create table CateDB(CateIDCol int, CateNameCol varchar(40))");
             statement.execute("DELETE FROM CateDB WHERE CateNameCol = '" + category.getCategoryName()+"'");
             ResultSet rs = statement.executeQuery(
@@ -177,6 +179,12 @@ public class DerbyDBModel implements IModel {
     public CostItem[] getCostItems() throws CostManagerException {
         //action performed will execute this command
         return new CostItem[0];
+    }
+
+    @Override
+    public Category[] getCategories() throws CostManagerException {
+        //action performed will execute this command
+        return new Category[0];
     }
 
 }

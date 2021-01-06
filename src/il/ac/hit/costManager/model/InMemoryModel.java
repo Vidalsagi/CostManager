@@ -5,6 +5,7 @@ import java.util.*;
 public class InMemoryModel implements IModel {
 
     private List<CostItem> items = new LinkedList<CostItem>();
+    private List<Category> categories = new LinkedList<Category>();
 
     @Override
     public void addCostItem(CostItem item) throws CostManagerException {
@@ -13,17 +14,27 @@ public class InMemoryModel implements IModel {
 
     @Override
     public void deleteCostItem(CostItem item) throws CostManagerException {
-
+        for(int i = 0; i < items.size();i++){
+                if(item.getItemName().equals(items.get(i).getItemName())){
+                items.remove(i);
+                break;
+            }
+        }
     }
 
     @Override
     public void addCategory(Category category) throws CostManagerException {
-
+        categories.add(category);
     }
 
     @Override
     public void deleteCategory(Category category) throws CostManagerException {
-
+        for(int i = 0; i < categories.size();i++){
+            if(category.getCategoryName().equals(categories.get(i).getCategoryName())){
+                categories.remove(i);
+                break;
+            }
+        }
     }
 
     @Override
@@ -34,6 +45,11 @@ public class InMemoryModel implements IModel {
     @Override
     public CostItem[] getCostItems() throws CostManagerException {
         return items.toArray(new CostItem[0]);
+    }
+
+    @Override
+    public Category[] getCategories() throws CostManagerException {
+        return categories.toArray(new Category[0]);
     }
 
     @Override
