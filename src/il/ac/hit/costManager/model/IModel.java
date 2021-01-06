@@ -9,6 +9,7 @@ public interface IModel {
     public void addCategory(Category category) throws CostManagerException;
     public void deleteCategory(Category category) throws CostManagerException;
     public int generateItemID() throws CostManagerException;
+    public void loadItems() throws CostManagerException;
     public CostItem[] getCostItems() throws CostManagerException;
     public Category[] getCategories() throws CostManagerException;
     public List<CostItem> getAllItems() throws CostManagerException;

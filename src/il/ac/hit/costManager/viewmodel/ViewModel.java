@@ -50,6 +50,23 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
+    public void loadItems() { //load items from database
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    model.loadItems();
+                    view.showMessage("Cost items were loaded from model.");
+                    CostItem[] items = model.getCostItems();
+                    view.showItems(items);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
     public void deleteCostItem(CostItem item) {
         pool.submit(new Runnable() {
             @Override

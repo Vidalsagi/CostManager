@@ -55,6 +55,7 @@ public class View implements IView {
             public void run() {
                 View.this.ui = new ApplicationUI();
                 View.this.ui.start();
+                View.this.vm.loadItems();
 
             }
         });
@@ -623,8 +624,8 @@ public class View implements IView {
                         //generate itemID
                         int itemID = 0;
                         //get price
-                        double sum = Double.parseDouble(tfItemPrice.getText());
-                        String chosenCurrency = comboCurrencyOptions.getSelectedItem().toString();
+                        double sum = 0;
+                        String chosenCurrency = "0";
                         //get currency
                         Currency currency = null;
                         switch (chosenCurrency) {
@@ -644,19 +645,14 @@ public class View implements IView {
                         //get category name
                         String categoryName = tfItemCateName.getText();
                         //get category ID
-                        if (categoryName == null || categoryName.length() == 0) {
-                            throw new CostManagerException("Category name cannot be empty");
-                        }
                         int cateID = 0;
                         //add purchase date
                         String purchaseDate = cbDDItems.getSelectedItem().toString() + "." + cbMMItems.getSelectedItem().toString()
-                                + "." + cbYYYYItems.getSelectedItem().toString() ;
+                                + "." + cbYYYYItems.getSelectedItem().toString();
                         CostItem item = new CostItem(itemID, cateID, itemName, currency,
                                 sum, purchaseDate);
                         vm.deleteCostItem(item);
 
-                    } catch (NumberFormatException ex) {
-                        View.this.showMessage("problem with entered sum... " + ex.getMessage());
                     } catch (CostManagerException ex) {
                         View.this.showMessage("problem with entered data... problem with description... " + ex.getMessage());
                     }

@@ -13,6 +13,7 @@ public interface IViewModel {
     public void setView(IView view);
     public void setModel(IModel model);
     public void addCostItem(CostItem item);
+    public void loadItems();
     public void deleteCostItem(CostItem item);
     public void addCategory(Category category);
     public void deleteCategory(Category category);

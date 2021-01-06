@@ -35,7 +35,7 @@ public class DerbyDBModel implements IModel {
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
-        throw new CostManagerException("Exception");
+        throw new CostManagerException("Couldn't add a new item.");
         }
     }
 
@@ -173,6 +173,11 @@ public class DerbyDBModel implements IModel {
         }
         catch(Exception e) { e.printStackTrace(); }
         return minID;
+    }
+
+    @Override
+    public void loadItems() throws CostManagerException {
+
     }
 
     @Override
