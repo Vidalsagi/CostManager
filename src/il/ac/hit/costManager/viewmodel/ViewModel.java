@@ -6,6 +6,7 @@ import il.ac.hit.costManager.model.CostManagerException;
 import il.ac.hit.costManager.model.IModel;
 import il.ac.hit.costManager.view.IView;
 
+import javax.swing.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -48,6 +49,11 @@ public class ViewModel implements IViewModel {
         });
 
     }
+
+    @Override
+    public List<CostItem> checkItemList() throws CostManagerException {
+        return model.getAllItems();
+    }
 /*
     @Override
     public void getCateName() {
@@ -76,6 +82,41 @@ public class ViewModel implements IViewModel {
                 try {
                     model.loadItems();
                     view.showMessage("Cost items were loaded from model.");
+                    CostItem[] items = model.getCostItems();
+                    view.showItems(items);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void loadCategories() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    model.loadCategories();
+                    view.showMessage("Categories were loaded from model.");
+                    Category[] categories = model.getCategories();
+                    view.showCategories(categories);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void updateItemsList() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    model.updateItemsList();
+                    view.showMessage("Items were updated on database successfully.");
+                    loadItems();
                     CostItem[] items = model.getCostItems();
                     view.showItems(items);
                 } catch (CostManagerException e) {

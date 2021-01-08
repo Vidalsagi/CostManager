@@ -13,7 +13,7 @@ public interface IModel {
     public void loadItems() throws CostManagerException;
     public void loadCategories() throws CostManagerException;
     public void updateCateList() throws CostManagerException;
-    public void updateItemsList() throws CostManagerException;
+    public List<CostItem> updateItemsList() throws CostManagerException;
     public CostItem[] getCostItems() throws CostManagerException;
     public Category[] getCategories() throws CostManagerException;
     public List<CostItem> getAllItems() throws CostManagerException;

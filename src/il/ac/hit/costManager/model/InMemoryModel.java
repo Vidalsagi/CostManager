@@ -74,6 +74,7 @@ public class InMemoryModel implements IModel{
 
     @Override
     public void loadItems()  { //this function is used for loading items from database
+        List<CostItem> itemsNew = new LinkedList<CostItem>();
         try
         {
             Connection connection = DriverManager.getConnection(protocol);
@@ -97,8 +98,9 @@ public class InMemoryModel implements IModel{
                         "Currency = " + rs.getString("CurrencyCol") +
                         "Price= " + rs.getInt("PriceCol") +
                         "Purchase Date: " + rs.getString("PurchaseDateCol"));
-                items.add(costItem);
+                itemsNew.add(costItem);
             }
+            items = itemsNew;
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -131,12 +133,48 @@ public class InMemoryModel implements IModel{
 
     @Override
     public void updateCateList() throws CostManagerException {
+        /*
+        List<Category> newList = new LinkedList<>();
+        loadCategories();
+        newList = categories;
+        //get the info from application
+        for(int i = 0; i < newList.size();i++){
+            newList.get(i).
+        }
 
+         */
     }
 
     @Override
-    public void updateItemsList() throws CostManagerException {
-
+    public List<CostItem> updateItemsList() throws CostManagerException {
+        List<CostItem> itemsNew = new LinkedList<CostItem>();
+        loadItems();
+        itemsNew = items;
+        //update the ids to make sure they start from 1 to XXXX..
+        try
+        {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            String query = "update ItemDB set ItemIDCol = ? where ItemNameCol = ? AND PurchaseDateCol = ?";
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.setInt(1, 1);
+            pst.setString(2, itemsNew.get(1).getItemName());
+            pst.setString(3, itemsNew.get(1).getPurchaseDate());
+            pst.executeUpdate();
+            for(int i = 1; i < itemsNew.size(); i++){
+                pst.setInt(1, i);
+                pst.setString(2, itemsNew.get(i).getItemName());
+                pst.setString(3, itemsNew.get(i).getPurchaseDate());
+                pst.executeUpdate();
+            }
+            pst.close();
+        }
+        catch(SQLException sqlException) {
+            sqlException.printStackTrace();
+            throw new CostManagerException("Couldn't load items.");
+        }
+        items = itemsNew;
+        return itemsNew;
     }
 
     @Override
@@ -151,8 +189,34 @@ public class InMemoryModel implements IModel{
 
     @Override
     public List<CostItem> getAllItems() throws CostManagerException {
-        return null;
-    }
+        List<CostItem> newList = new LinkedList<>();
+        try
+        {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT * FROM ItemDB ORDER BY ItemIDCol");
+            while(rs.next())
+            {
+                Currency currency = Currency.valueOf(rs.getString("CurrencyCol").toUpperCase());
+                CostItem costItem = new CostItem(rs.getInt("ItemIDCol"),
+                        rs.getInt("CateIDCol"), rs.getString("ITEMNAMECOL"),
+                        currency, rs.getInt("PriceCol"),
+                        rs.getString("PurchaseDateCol"));
+
+                System.out.println("ItemID="+rs.getInt("ItemIDCol")
+                        + "CateID= " + rs.getInt("CateIDCol") +
+                        " Name= "+rs.getString("ITEMNAMECOL")
+                        + "Currency = " + rs.getString("CurrencyCol") +
+                        "Price= " + rs.getInt("PriceCol") +
+                        "Purchase Date: " + rs.getString("PurchaseDateCol"));
+                newList.add(costItem);
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return newList;    }
 
     @Override
     public List<Category> getAllCategories() throws CostManagerException {

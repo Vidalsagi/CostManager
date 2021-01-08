@@ -191,8 +191,8 @@ public class DerbyDBModel implements IModel {
     }
 
     @Override
-    public void updateItemsList() throws CostManagerException {
-
+    public List<CostItem> updateItemsList() throws CostManagerException {
+        return null;
     }
 
 

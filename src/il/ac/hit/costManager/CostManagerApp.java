@@ -16,7 +16,6 @@ public class CostManagerApp {
                     IModel model = new InMemoryModel();
                     IView view = new View();
                     IViewModel vm = new ViewModel();
-
                     //connecting the components with each other
                     view.setViewModel(vm);
                     vm.setModel(model);

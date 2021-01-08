@@ -56,6 +56,7 @@ public class View implements IView {
                 View.this.ui = new ApplicationUI();
                 View.this.ui.start();
                 View.this.vm.loadItems();
+                View.this.vm.loadCategories();
 
             }
         });
@@ -169,7 +170,6 @@ public class View implements IView {
             imgCateBackground2 = new JLabel("");
 
             /* PanelItem related (Items) */
-            //tableItem = new JTable();
             //In items tab add table for adding data
 
             textAreaItems = new JTextArea();
@@ -177,17 +177,10 @@ public class View implements IView {
 
             //In the items tab add field to add the DD to purchase date
             cbDDItems = new JComboBox();
-            //purchase_Date_DD = new JTextField();
-            //in items tab set field "MM"
-            //txtMm = new JTextField();
             //In the items tab add field to add the MM to purchase date
             cbMMItems = new JComboBox();
-            //purchase_Date_MM = new JTextField();
-            //in items tab set field "YYYY"
-            //txtYyyy = new JTextField();
             //In the items tab add field to add the YYYY to purchase date
             cbYYYYItems = new JComboBox();
-            //purchase_Date_YYYY = new JTextField();
             //in items tab set add field for item
             tfItemName = new JTextField();
             //In the Items tab add field to add categories
@@ -570,8 +563,9 @@ public class View implements IView {
                         if (itemName == null || itemName.length() == 0) {
                             throw new CostManagerException("Item name cannot be empty");
                         }
+
                         //generate itemID
-                        int itemID = 0;
+                        int itemID = 33331;
                         //get price
                         double sum = Double.parseDouble(tfItemPrice.getText());
                         String chosenCurrency = comboCurrencyOptions.getSelectedItem().toString();
@@ -597,12 +591,19 @@ public class View implements IView {
                         if (categoryName == null || categoryName.length() == 0) {
                             throw new CostManagerException("Category name cannot be empty");
                         }
-                        int cateID = 0;
+                        int cateID = 33331;
                         //add purchase date
                         String purchaseDate = cbDDItems.getSelectedItem().toString() + "." + cbMMItems.getSelectedItem().toString()
                                 + "." + cbYYYYItems.getSelectedItem().toString() ;
                         CostItem item = new CostItem(itemID, cateID, itemName, currency,
                                 sum, purchaseDate);
+                        //check if item exists already by name
+                        List<CostItem> newList = vm.checkItemList();
+                        for(int i=0;i< newList.size();i++){
+                            if(newList.get(i).getItemName().equals(itemName) && newList.get(i).getPurchaseDate().equals(purchaseDate))
+                                throw new CostManagerException("Item Name already exsists in the same date in system.");
+                        }
+                        vm.updateItemsList();
                         vm.addCostItem(item);
 
                     } catch (NumberFormatException ex) {
@@ -747,7 +748,7 @@ public class View implements IView {
         public void showItems(CostItem[] items) {
             StringBuilder sb = new StringBuilder();
             for (CostItem item : items) {
-                sb.append(item.toString() + "CategoryName= ");
+                sb.append(item.toString());
                 sb.append("\n");
             }
             String text = sb.toString();
