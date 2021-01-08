@@ -181,6 +181,22 @@ public class DerbyDBModel implements IModel {
     }
 
     @Override
+    public void loadCategories() throws CostManagerException {
+
+    }
+
+    @Override
+    public void updateCateList() throws CostManagerException {
+
+    }
+
+    @Override
+    public void updateItemsList() throws CostManagerException {
+
+    }
+
+
+    @Override
     public CostItem[] getCostItems() throws CostManagerException {
         //action performed will execute this command
         return new CostItem[0];

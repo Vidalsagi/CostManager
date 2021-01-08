@@ -747,7 +747,7 @@ public class View implements IView {
         public void showItems(CostItem[] items) {
             StringBuilder sb = new StringBuilder();
             for (CostItem item : items) {
-                sb.append(item.toString());
+                sb.append(item.toString() + "CategoryName= ");
                 sb.append("\n");
             }
             String text = sb.toString();

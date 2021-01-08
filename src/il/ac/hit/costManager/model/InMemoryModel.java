@@ -73,7 +73,7 @@ public class InMemoryModel implements IModel{
     }
 
     @Override
-    public void loadItems() throws CostManagerException { //this function is used for loading items from database
+    public void loadItems()  { //this function is used for loading items from database
         try
         {
             Connection connection = DriverManager.getConnection(protocol);
@@ -88,10 +88,13 @@ public class InMemoryModel implements IModel{
                         currency, rs.getInt("PriceCol"),
                         rs.getString("PurchaseDateCol"));
 
+                //String cateName = getNameOfCate(rs.getInt("CateIDCol"));
+
                 System.out.println("ItemID="+rs.getInt("ItemIDCol")
                         + "CateID= " + rs.getInt("CateIDCol") +
                         " Name= "+rs.getString("ITEMNAMECOL")
-                        + "Currency = " + rs.getString("CurrencyCol") +
+                        + "CategoryName = " + "cateName" +
+                        "Currency = " + rs.getString("CurrencyCol") +
                         "Price= " + rs.getInt("PriceCol") +
                         "Purchase Date: " + rs.getString("PurchaseDateCol"));
                 items.add(costItem);
@@ -100,6 +103,40 @@ public class InMemoryModel implements IModel{
         catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void loadCategories() throws CostManagerException {
+        List<Category> newList = new LinkedList<>();
+        try
+        {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT * FROM CateDB ORDER BY CateIDCol");
+            while(rs.next())
+            {
+                Category category = new Category(rs.getInt("CateIDCol"),
+                        rs.getString("CateNameCol"));
+
+                System.out.println("CateID="+rs.getInt("CateIDCol")
+                        + "Category Name= " + rs.getString("CateNameCol"));
+                categories.add(category);
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateCateList() throws CostManagerException {
+
+    }
+
+    @Override
+    public void updateItemsList() throws CostManagerException {
+
     }
 
     @Override

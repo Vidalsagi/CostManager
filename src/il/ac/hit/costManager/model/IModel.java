@@ -1,5 +1,6 @@
 package il.ac.hit.costManager.model;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface IModel {
@@ -10,6 +11,9 @@ public interface IModel {
     public void deleteCategory(Category category) throws CostManagerException;
     public int generateItemID() throws CostManagerException;
     public void loadItems() throws CostManagerException;
+    public void loadCategories() throws CostManagerException;
+    public void updateCateList() throws CostManagerException;
+    public void updateItemsList() throws CostManagerException;
     public CostItem[] getCostItems() throws CostManagerException;
     public Category[] getCategories() throws CostManagerException;
     public List<CostItem> getAllItems() throws CostManagerException;

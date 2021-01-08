@@ -48,6 +48,25 @@ public class ViewModel implements IViewModel {
         });
 
     }
+/*
+    @Override
+    public void getCateName() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String cateName = model.getNameOfCate();
+                    view.showMessage("Cost items were loaded from model.");
+                    CostItem[] items = model.getCostItems();
+                    view.showItems(items);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+ */
 
     @Override
     public void loadItems() { //load items from database
