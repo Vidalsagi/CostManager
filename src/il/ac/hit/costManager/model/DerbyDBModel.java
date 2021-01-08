@@ -1,6 +1,7 @@
 package il.ac.hit.costManager.model;
 
 import java.sql.*;
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -95,6 +96,11 @@ public class DerbyDBModel implements IModel {
             e.printStackTrace();
         }
         return newList;
+    }
+
+    @Override
+    public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws ParseException, CostManagerException {
+        return null;
     }
 
     @Override

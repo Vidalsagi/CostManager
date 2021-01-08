@@ -1,7 +1,11 @@
 package il.ac.hit.costManager.model;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 public class InMemoryModel implements IModel{
 
@@ -221,5 +225,22 @@ public class InMemoryModel implements IModel{
     @Override
     public List<Category> getAllCategories() throws CostManagerException {
         return null;
+    }
+    @Override
+    public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws ParseException, CostManagerException {
+
+        DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        Date dateFrom = format.parse(sDateFrom);
+        Date dateTo = format.parse(sDateTo);
+        loadItems();
+        List<CostItem> filteredItems = new LinkedList<CostItem>();
+
+        for(int i=0;i<items.size();i++){
+            Date currentItemDate = format.parse(items.get(i).getPurchaseDate());
+            if(dateFrom.before(currentItemDate)&&dateTo.after(currentItemDate)) {
+                filteredItems.add(items.get(i));
+            }
+        }
+        return filteredItems;
     }
 }

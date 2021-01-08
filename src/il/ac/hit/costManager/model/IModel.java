@@ -1,6 +1,7 @@
 package il.ac.hit.costManager.model;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
 
 public interface IModel {
@@ -18,5 +19,6 @@ public interface IModel {
     public Category[] getCategories() throws CostManagerException;
     public List<CostItem> getAllItems() throws CostManagerException;
     public List<Category> getAllCategories() throws CostManagerException;
+    public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws ParseException, CostManagerException;
 
 }

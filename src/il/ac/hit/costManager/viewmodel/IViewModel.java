@@ -7,6 +7,7 @@ import il.ac.hit.costManager.view.IView;
 import il.ac.hit.costManager.model.IModel;
 
 import javax.swing.*;
+import java.text.ParseException;
 import java.util.List;
 
 public interface IViewModel {
@@ -21,5 +22,6 @@ public interface IViewModel {
     public void deleteCostItem(CostItem item);
     public void addCategory(Category category);
     public void deleteCategory(Category category);
+    public void handleReport(String dateFrom , String dateTo) throws ParseException, CostManagerException;
 
 }

@@ -7,6 +7,7 @@ import il.ac.hit.costManager.model.IModel;
 import il.ac.hit.costManager.view.IView;
 
 import javax.swing.*;
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -54,25 +55,6 @@ public class ViewModel implements IViewModel {
     public List<CostItem> checkItemList() throws CostManagerException {
         return model.getAllItems();
     }
-/*
-    @Override
-    public void getCateName() {
-        pool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String cateName = model.getNameOfCate();
-                    view.showMessage("Cost items were loaded from model.");
-                    CostItem[] items = model.getCostItems();
-                    view.showItems(items);
-                } catch (CostManagerException e) {
-                    view.showMessage(e.getMessage());
-                }
-            }
-        });
-    }
-
- */
 
     @Override
     public void loadItems() { //load items from database
@@ -177,6 +159,13 @@ public class ViewModel implements IViewModel {
             }
         });
 
+    }
+
+
+    @Override
+    public void handleReport(String DateFrom, String DateTo) throws ParseException, CostManagerException {
+        List<CostItem> itemsReport = model.handleReport(DateFrom,DateTo);
+        view.showReportItems(itemsReport);
     }
 }
 
