@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.ParseException;
 import java.util.List;
 
 public class View implements IView {
@@ -35,6 +36,10 @@ public class View implements IView {
     }
 
     @Override
+    public void showReportItems (List<CostItem> itemsReport){ui.showReportItems(itemsReport); };
+
+
+    @Override
     public void showItems(CostItem[] items) {
         ui.showItems(items);
     }
@@ -43,6 +48,12 @@ public class View implements IView {
     public void showCategories(Category[] categories) {
         ui.showCategories(categories);
     }
+
+    //this will recieve the selected dates from action listener and will call the vm handleReport
+    @Override
+    public void showReport(String dateFrom , String dateTo) throws ParseException, CostManagerException {
+    }
+
 
     @Override
     public void showMessageItemsLoaded(String message) {
@@ -72,6 +83,8 @@ public class View implements IView {
         private JPanel panelMain;
         private JPanel panelCate;
         private JPanel panelItem;
+        private JPanel panelReport;
+        private JPanel panelMessage;
 
         private JMenuBar menuBar;
 
@@ -79,7 +92,6 @@ public class View implements IView {
         private JMenu mnFile;
         private JMenuItem mntmExit;
         private JMenuItem mntmCreatePieDiagram;
-        private JMenuItem mntmReport;
 
         private JTabbedPane tabbedPane;
 
@@ -95,6 +107,25 @@ public class View implements IView {
         private JLabel imgCateBackground2;
         private JButton btnAddCategory;
         private JButton btnDeleteCategory;
+
+
+        /**
+         * panel Report
+         */
+        private JTextArea textAreaReport;
+        private JTextField tfSumTotalReport;
+        private JButton btnGenerateReport;
+        private JLabel lblSetDatesReport;
+        private JScrollPane spReport;
+        private JLabel lblFromReport;
+        private JLabel lblToReport;
+        private JComboBox cbDDFromReport;
+        private JComboBox cbMMFromReport;
+        private JComboBox cbYYYYFromReport;
+        private JComboBox cbDDToReport;
+        private JComboBox cbMMToReport;
+        private JComboBox cbYYYYToReport;
+        private JLabel lblTotalCost;
 
         /**
          * panel Items
@@ -121,6 +152,12 @@ public class View implements IView {
         private JComboBox comboCurrencyOptions;
         private JComboBox cateItemsMenuCombo;
 
+        /**
+         * panel Messages
+         */
+        private JLabel lbMessage;
+        private JTextField tfMessage;
+
 
         public ApplicationUI() {
             //creating the window
@@ -131,7 +168,12 @@ public class View implements IView {
             panelCate = new JPanel();
             //set the items panel
             panelItem = new JPanel();
-            //Set the tabs of summary,categories,items on TOP
+            //set the report panel
+            panelReport = new JPanel();
+
+            //set messages panel
+            panelMessage = new JPanel();
+            //Set the tabs of report,categories,items on TOP
             tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 
             //create the Jmenu
@@ -142,8 +184,7 @@ public class View implements IView {
             mntmExit = new JMenuItem("Exit");
             //Add a buttom in the menu to create a pie chart
             mntmCreatePieDiagram = new JMenuItem("Create Pie Diagram.");
-            //Add a buttom in the menu to create a pie chart
-            mntmReport = new JMenuItem("Print Report");
+
 
             //create three panels
             /* PanelCate related (Categories) */
@@ -219,6 +260,26 @@ public class View implements IView {
             comboCurrencyOptions = new JComboBox();
             cateItemsMenuCombo = new JComboBox();
 
+            /* PanelCate related (Report) */
+            textAreaReport = new JTextArea();
+            lblSetDatesReport = new JLabel("Set dates range to print the report");
+            spReport = new JScrollPane();
+            lblFromReport = new JLabel("From:");
+            lblToReport = new JLabel("To:");
+            btnGenerateReport = new JButton("Generate Report");
+            cbDDFromReport = new JComboBox();
+            cbMMFromReport = new JComboBox();
+            cbYYYYFromReport = new JComboBox();
+            cbDDToReport = new JComboBox();
+            cbMMToReport = new JComboBox();
+            cbYYYYToReport = new JComboBox();
+            tfSumTotalReport = new JTextField();
+            lblTotalCost = new JLabel("Total Cost:");
+
+            /*PanelMessage related */
+            lbMessage = new JLabel("Message:");
+            tfMessage = new JTextField(30);
+
         }
 
         public void start() {
@@ -254,6 +315,30 @@ public class View implements IView {
             panelItem.add(cateItemsMenuCombo);
             panelItem.add(imgCostBackItems1);            //In the items tab add a background
             panelItem.add(imgCostBackground);            //In the items tab add a background2
+
+            //panel Report
+            panelReport.add(textAreaReport);
+            panelReport.add(lblSetDatesReport);
+            panelReport.add(spReport);
+            panelReport.add(lblFromReport);
+            panelReport.add(lblToReport);
+            panelReport.add(btnGenerateReport);
+            panelReport.add(cbDDFromReport);
+            panelReport.add(cbMMFromReport);
+            panelReport.add(cbYYYYFromReport);
+            panelReport.add(cbDDToReport);
+            panelReport.add(cbMMToReport);
+            panelReport.add(cbYYYYToReport);
+            panelReport.add(tfSumTotalReport);
+            panelReport.add(lblTotalCost);
+
+            //messages panel
+            panelMessage.add(lbMessage);
+            panelMessage.add(tfMessage);
+
+            //setting a different color for the panel message
+            panelMessage.setBackground(Color.GREEN);
+
 
             //general components
             menuBar.add(mnFile);
@@ -298,13 +383,9 @@ public class View implements IView {
             mntmCreatePieDiagram.setForeground(Color.BLACK);
             mntmCreatePieDiagram.setBackground(Color.WHITE);
 
-            //Add a buttom in the menu to create a pie chart
-            mntmReport.setForeground(Color.BLACK);
-            mntmReport.setBackground(Color.WHITE);
 
             //Add the buttons to mnFile
             mnFile.add(mntmCreatePieDiagram);
-            mnFile.add(mntmReport);
             mnFile.add(mntmExit);
 
             //Set the Categories panel
@@ -511,10 +592,77 @@ public class View implements IView {
             imgCostBackground.setIcon(new ImageIcon("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\MoneyBackground.png"));
 
 
+            /**
+             * panelReport Properties
+             **/
+            panelReport.setBackground(Color.WHITE);
+            tabbedPane.addTab("Report", null, panelReport, null);
+            panelReport.setLayout(null);
+
+            lblSetDatesReport.setForeground(Color.BLACK);
+            lblSetDatesReport.setFont(new Font("Cooper Black", Font.PLAIN, 25));
+            lblSetDatesReport.setBounds(27, 386, 454, 28);
+
+            spReport.setBounds(27, 32, 760, 351);
+
+            lblFromReport.setForeground(Color.BLACK);
+            lblFromReport.setFont(new Font("Cooper Black", Font.PLAIN, 25));
+            lblFromReport.setBounds(27, 459, 98, 28);
+
+            lblToReport.setForeground(Color.BLACK);
+            lblToReport.setFont(new Font("Cooper Black", Font.PLAIN, 25));
+            lblToReport.setBounds(255, 459, 53, 28);
+
+            btnGenerateReport.setFont(new Font("Cooper Black", Font.PLAIN, 26));
+            btnGenerateReport.setBounds(490, 461, 297, 28);
+
+            cbDDFromReport.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"}));
+            cbDDFromReport.setSelectedIndex(0);
+            cbDDFromReport.setBounds(27, 510, 44, 33);
+
+            cbMMFromReport.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}));
+            cbMMFromReport.setSelectedIndex(0);
+            cbMMFromReport.setBounds(81, 510, 44, 33);
+
+            cbYYYYFromReport.setModel(new DefaultComboBoxModel(new String[] {"1940", "1941", "1942", "1943", "1944", "1945", "1946", "1947", "1948", "1949", "1950", "1951", "1952", "1953", "1954", "1955", "1956", "1957", "1958", "1959", "1960", "1961", "1962", "1963", "1964", "1965", "1966", "1967", "1968", "1969", "1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"}));
+            cbYYYYFromReport.setSelectedIndex(0);
+            cbYYYYFromReport.setBounds(140, 510, 76, 33);
+
+            cbDDToReport.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"}));
+            cbDDToReport.setSelectedIndex(0);
+            cbDDToReport.setBounds(264, 510, 44, 33);
+
+            cbMMToReport.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}));
+            cbMMToReport.setSelectedIndex(0);
+            cbMMToReport.setBounds(318, 510, 44, 33);
+
+            cbYYYYToReport.setModel(new DefaultComboBoxModel(new String[] {"1940", "1941", "1942", "1943", "1944", "1945", "1946", "1947", "1948", "1949", "1950", "1951", "1952", "1953", "1954", "1955", "1956", "1957", "1958", "1959", "1960", "1961", "1962", "1963", "1964", "1965", "1966", "1967", "1968", "1969", "1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"}));
+            cbYYYYToReport.setSelectedIndex(0);
+            cbYYYYToReport.setBounds(372, 510, 76, 33);
+
+            tfSumTotalReport = new JTextField();
+            tfSumTotalReport.setEditable(false);
+            tfSumTotalReport.setBounds(664, 513, 123, 28);
+            tfSumTotalReport.setColumns(10);
+
+            //In report tab add table for adding data
+            spReport.setBounds(0, 0, 709, 424);
+            //itemMenu.setViewportView(table3);
+            spReport.setViewportView(textAreaReport);
+
+            lblTotalCost.setForeground(Color.BLACK);
+            lblTotalCost.setFont(new Font("Cooper Black", Font.PLAIN, 25));
+            lblTotalCost.setBounds(495, 510, 159, 28);
+
+            /**
+             * TabbedPane position and layout
+             **/
+
             //setting the window layout manager
             frame.setLayout(new BorderLayout());
 
             frame.add(tabbedPane, BorderLayout.CENTER);
+            frame.add(panelMessage, BorderLayout.SOUTH);
 
 
             //handling window closing
@@ -547,18 +695,6 @@ public class View implements IView {
                     demo.pack();
                     demo.setVisible(true);
                     System.out.println("Creates a pie chart.");
-                }
-            });
-
-
-            //handling the button Print Report in menu
-            mntmReport.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    //Open the report window
-                    getReportMenu report = new getReportMenu();
-                    report.frame.setVisible(true);
-                    System.out.println("Report was created");
                 }
             });
             //handling cost item adding button click on items tab
@@ -703,6 +839,24 @@ public class View implements IView {
                 }
             });
 
+            // this will save the selected dates by user, and will save into a string format, and will send to show report
+            btnGenerateReport.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String purchaseDateFrom = cbDDFromReport.getSelectedItem().toString() + "." + cbMMFromReport.getSelectedItem().toString()
+                            + "." + cbYYYYFromReport.getSelectedItem().toString() ;
+                    String purchaseDateTo = cbDDToReport.getSelectedItem().toString() + "." + cbMMToReport.getSelectedItem().toString()
+                            + "." + cbYYYYToReport.getSelectedItem().toString() ;
+                    try {
+                        vm.handleReport(purchaseDateFrom,purchaseDateTo);
+                    } catch (ParseException parseException) {
+                        parseException.printStackTrace();
+                    } catch (CostManagerException costManagerException) {
+                        costManagerException.printStackTrace();
+                    }
+                }
+
+            });
+
             //displaying the window
             frame.setSize(1200, 600);
             frame.setVisible(true);
@@ -710,12 +864,12 @@ public class View implements IView {
 
         public void showMessage(String text) {
             if (SwingUtilities.isEventDispatchThread()) {
-                textAreaItems.setText(text);
+                tfMessage.setText(text);
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        textAreaItems.setText(text);
+                        tfMessage.setText(text);
                     }
                 });
             }
@@ -744,10 +898,35 @@ public class View implements IView {
             //}
         }
 
+
+        public void showReportItems(List<CostItem> itemsReport) {
+            StringBuilder sb = new StringBuilder();
+            for (CostItem item : itemsReport) {
+                sb.append(item.toString());
+                sb.append("\n");
+            }
+            String text = sb.toString();
+
+            if (SwingUtilities.isEventDispatchThread()) {
+
+                textAreaReport.setText(text);
+            }
+            else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        textAreaReport.setText(text);
+                    }
+                });
+
+            }
+        }
+
+
         public void showItems(CostItem[] items) {
             StringBuilder sb = new StringBuilder();
             for (CostItem item : items) {
-                sb.append(item.toString() + "CategoryName= ");
+                sb.append(item.toString());
                 sb.append("\n");
             }
             String text = sb.toString();

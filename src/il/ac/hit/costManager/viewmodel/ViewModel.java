@@ -6,6 +6,10 @@ import il.ac.hit.costManager.model.CostManagerException;
 import il.ac.hit.costManager.model.IModel;
 import il.ac.hit.costManager.view.IView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -137,6 +141,13 @@ public class ViewModel implements IViewModel {
         });
 
     }
+
+    @Override
+    public void handleReport(String DateFrom, String DateTo) throws ParseException, CostManagerException {
+        List<CostItem> itemsReport = model.handleReport(DateFrom,DateTo);
+        view.showReportItems(itemsReport);
+    }
+
 }
 
 

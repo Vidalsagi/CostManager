@@ -1,14 +1,14 @@
-Fri Jan 08 13:08:05 IST 2021 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+Fri Jan 08 15:08:12 IST 2021 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Fri Jan 08 13:11:14 IST 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0176-e1ae-9c5f-ffffa79a58a6 
-on database directory C:\Users\Sagi\Desktop\אבן דרך 2\CostManagerApp\bin\CostManager with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@4459eb14 
-Loaded from file:/C:/Users/Sagi/Desktop/%d7%90%d7%91%d7%9f%20%d7%93%d7%a8%d7%9a%202/CostManagerApp/lib/derby.jar
-java.vendor=Amazon.com Inc.
-java.runtime.version=11.0.8+10-LTS
-user.dir=C:\Users\Sagi\Desktop\אבן דרך 2\CostManagerApp\bin
+Fri Jan 08 15:08:18 IST 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0176-e21c-95a7-00003e078248 
+on database directory C:\Users\Switchback\IdeaProjects\CostManager\bin\CostManager with class loader sun.misc.Launcher$AppClassLoader@610455d6 
+Loaded from file:/C:/Users/Switchback/IdeaProjects/CostManager/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_241-b07
+user.dir=C:\Users\Switchback\IdeaProjects\CostManager\bin
 os.name=Windows 10
 os.arch=amd64
 os.version=10.0
-derby.system.home=C:\Users\Sagi\Desktop\אבן דרך 2\CostManagerApp\bin
+derby.system.home=C:\Users\Switchback\IdeaProjects\CostManager\bin
 Database Class Loader started - derby.database.classpath=''
