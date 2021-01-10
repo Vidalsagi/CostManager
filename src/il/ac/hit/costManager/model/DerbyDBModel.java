@@ -1,5 +1,8 @@
 package il.ac.hit.costManager.model;
 
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+
 import java.sql.*;
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -155,31 +158,7 @@ public class DerbyDBModel implements IModel {
         catch(Exception e) { e.printStackTrace(); }
     }
 
-    @Override
-    public int generateItemID() throws CostManagerException {
-        int incID = 1;
-        int minID = 1;
-        int prevID = 1;
-        try
-        {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(
-                    "SELECT ItemIDCol FROM ItemDB ORDER BY ItemIDCol");
-            while(rs.next())
-            {
-                incID = rs.getInt("ItemIDCol");
-                System.out.println("Incoming ID is: " + incID + "and minID is: " + minID);
-                if (incID - prevID == 2){
-                    minID = incID - 1;
-                    return minID;
-                }
-                prevID = incID;
-            }
-        }
-        catch(Exception e) { e.printStackTrace(); }
-        return minID;
-    }
+
 
     @Override
     public void loadItems() throws CostManagerException {
@@ -191,15 +170,12 @@ public class DerbyDBModel implements IModel {
 
     }
 
-    @Override
-    public void updateCateList() throws CostManagerException {
-
-    }
 
     @Override
-    public List<CostItem> updateItemsList() throws CostManagerException {
+    public DefaultPieDataset createDataset() throws CostManagerException {
         return null;
     }
+
 
 
     @Override

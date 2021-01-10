@@ -9,7 +9,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.util.Rotation;
 
-
+//This class isn't used here, the methods work in "View" class.
 public class PieChart extends JFrame {
 
     private static final long serialVersionUID = 1L;

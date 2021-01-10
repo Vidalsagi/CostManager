@@ -1,5 +1,8 @@
 package il.ac.hit.costManager.model;
 
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,6 +18,7 @@ public class InMemoryModel implements IModel{
     public static String driver = "org.apache.derby.jdbc.ClientDriver";
     public static String protocol = "jdbc:derby://localhost:1527/CostManager;create=true";
 
+    //|||||||||||||||||||||||||||||||| This function will add item from the list ||||||||||||||||||||||||||||||||
     @Override
     public void addCostItem(CostItem item) throws CostManagerException {
         try
@@ -36,12 +40,14 @@ public class InMemoryModel implements IModel{
         items.add(item);
     }
 
+    //|||||||||||||||||||||||||||||||| This function will remove item from the list ||||||||||||||||||||||||||||||||
     @Override
     public void deleteCostItem(CostItem item) throws CostManagerException {
         try {
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            statement.execute("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"'");
+            statement.execute("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"' AND PurchaseDateCol = '" +
+            item.getPurchaseDate() + "'");
             ResultSet rs = statement.executeQuery(
                     "SELECT ItemIDCol,ITEMNAMECOL FROM ItemDB ORDER BY ItemIDCol");
         }
@@ -56,13 +62,42 @@ public class InMemoryModel implements IModel{
         }
     }
 
+    //|||||||||||||||||||||||||||||||| This function will add category to the list ||||||||||||||||||||||||||||||||
+
     @Override
     public void addCategory(Category category) throws CostManagerException {
+        try
+        {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            //=========== Run a code to check if CateDB exsists =============
+            //statement.execute("create table CateDB(CateIDCol int, CateNameCol varchar(40))");
+            statement.execute("insert into CateDB(CateIDCol,CateNameCol) VALUES (" + category.getCategoryID()
+                    + ",'" + category.getCategoryName()  + "')");
+            ResultSet rs = statement.executeQuery(
+                    "SELECT * FROM CateDB ORDER BY CateIDCol");
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
         categories.add(category);
     }
 
+    //|||||||||||||||||||||||||||||||| This function will delete category from the list ||||||||||||||||||||||||||||||||
+
     @Override
     public void deleteCategory(Category category) throws CostManagerException {
+        try {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            //=========== Run a code to check if CateDB exsists =============
+            //statement.execute("create table CateDB(CateIDCol int, CateNameCol varchar(40))");
+            statement.execute("DELETE FROM CateDB WHERE CateNameCol = '" + category.getCategoryName()+"'");
+            ResultSet rs = statement.executeQuery(
+                    "SELECT * FROM ItemDB ORDER BY CateIDCol");
+        }
+        catch(Exception e) { e.printStackTrace(); }
+
         for(int i = 0; i < categories.size();i++){
             if(category.getCategoryName().equals(categories.get(i).getCategoryName())){
                 categories.remove(i);
@@ -71,13 +106,10 @@ public class InMemoryModel implements IModel{
         }
     }
 
-    @Override
-    public int generateItemID() throws CostManagerException {
-        return 0;
-    }
+    //|||||||||||||||||||||||||||||||| This function is used for loading items from database ||||||||||||||||||||||||||||||||
 
     @Override
-    public void loadItems()  { //this function is used for loading items from database
+    public void loadItems()  {
         List<CostItem> itemsNew = new LinkedList<CostItem>();
         try
         {
@@ -92,8 +124,6 @@ public class InMemoryModel implements IModel{
                         rs.getInt("CateIDCol"), rs.getString("ITEMNAMECOL"),
                         currency, rs.getInt("PriceCol"),
                         rs.getString("PurchaseDateCol"));
-
-                //String cateName = getNameOfCate(rs.getInt("CateIDCol"));
 
                 System.out.println("ItemID="+rs.getInt("ItemIDCol")
                         + "CateID= " + rs.getInt("CateIDCol") +
@@ -111,6 +141,8 @@ public class InMemoryModel implements IModel{
         }
     }
 
+    //|||||||||||||||||||||||||||||||| This function is used for loading categories from database ||||||||||||||||||||||||||||||||
+
     @Override
     public void loadCategories() throws CostManagerException {
         List<Category> newList = new LinkedList<>();
@@ -127,69 +159,53 @@ public class InMemoryModel implements IModel{
 
                 System.out.println("CateID="+rs.getInt("CateIDCol")
                         + "Category Name= " + rs.getString("CateNameCol"));
-                categories.add(category);
+                newList.add(category);
             }
+            categories = newList;
         }
         catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void updateCateList() throws CostManagerException {
-        /*
-        List<Category> newList = new LinkedList<>();
-        loadCategories();
-        newList = categories;
-        //get the info from application
-        for(int i = 0; i < newList.size();i++){
-            newList.get(i).
-        }
+    //|||||||||||||||||||||||||||||||| This function is used to create Dataset for the pieChart ||||||||||||||||||||||||||||||||
 
-         */
-    }
 
     @Override
-    public List<CostItem> updateItemsList() throws CostManagerException {
-        List<CostItem> itemsNew = new LinkedList<CostItem>();
-        loadItems();
-        itemsNew = items;
-        //update the ids to make sure they start from 1 to XXXX..
-        try
-        {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
-            String query = "update ItemDB set ItemIDCol = ? where ItemNameCol = ? AND PurchaseDateCol = ?";
-            PreparedStatement pst = connection.prepareStatement(query);
-            pst.setInt(1, 1);
-            pst.setString(2, itemsNew.get(1).getItemName());
-            pst.setString(3, itemsNew.get(1).getPurchaseDate());
-            pst.executeUpdate();
-            for(int i = 1; i < itemsNew.size(); i++){
-                pst.setInt(1, i);
-                pst.setString(2, itemsNew.get(i).getItemName());
-                pst.setString(3, itemsNew.get(i).getPurchaseDate());
-                pst.executeUpdate();
-            }
-            pst.close();
+    public DefaultPieDataset createDataset() throws CostManagerException {
+        DefaultPieDataset result = new DefaultPieDataset();
+        loadItems(); //make sure list is loaded
+        loadCategories(); //make sure categories list is loaded
+        //counting array
+        int count[] = new int[categories.size()];
+        for (int i = 0; i < categories.size(); ++i)
+            count[i] = 0;
+        for (int i = 0; i < items.size(); ++i)
+            ++count[items.get(i).getCateID()];
+        for(int i = 0; i < count.length; i++){
+            result.setValue(categories.get(i).getCategoryName(), count[i]);
         }
-        catch(SQLException sqlException) {
-            sqlException.printStackTrace();
-            throw new CostManagerException("Couldn't load items.");
-        }
-        items = itemsNew;
-        return itemsNew;
+        return result;
     }
+
+    //|||||||||||||||||||||||||||||||| This function is used to add costItems to the list ||||||||||||||||||||||||||||||||
+
 
     @Override
     public CostItem[] getCostItems() throws CostManagerException {
         return items.toArray(new CostItem[0]);
     }
 
+    //|||||||||||||||||||||||||||||||| This function is used to add categories to the list ||||||||||||||||||||||||||||||||
+
+
     @Override
     public Category[] getCategories() throws CostManagerException {
         return categories.toArray(new Category[0]);
     }
+
+    //|||||||||||||||||||||||||||||||| This function is used to load the items from database and return the list ||||||||||||||||||||||||||||||||
+
 
     @Override
     public List<CostItem> getAllItems() throws CostManagerException {
@@ -220,12 +236,39 @@ public class InMemoryModel implements IModel{
         catch(Exception e) {
             e.printStackTrace();
         }
-        return newList;    }
+        return newList;
+    }
+
+    //|||||||||||||||||||||||||||||||| This function is used to load the categories from database and return the list ||||||||||||||||||||||||||||||||
+
 
     @Override
     public List<Category> getAllCategories() throws CostManagerException {
-        return null;
+        List<Category> newList = new LinkedList<>();
+        try
+        {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT * FROM CateDB ORDER BY CateIDCol");
+            while(rs.next())
+            {
+                Category category = new Category(rs.getInt("CateIDCol"),
+                        rs.getString("CateNameCol"));
+
+                System.out.println("CateID="+rs.getInt("CateIDCol")
+                        + "Category Name= " + rs.getString("CateNameCol"));
+                newList.add(category);
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return newList;
     }
+
+    //|||||||||||||||||||||||||||||||| This function is used to handle the date ranges from the report/piechart ||||||||||||||||||||||||||||||||
+
     @Override
     public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws ParseException, CostManagerException {
 
@@ -237,7 +280,7 @@ public class InMemoryModel implements IModel{
 
         for(int i=0;i<items.size();i++){
             Date currentItemDate = format.parse(items.get(i).getPurchaseDate());
-            if(dateFrom.before(currentItemDate)&&dateTo.after(currentItemDate)) {
+            if(dateFrom.before(currentItemDate)&&dateTo.after(currentItemDate)||dateFrom.equals(currentItemDate)||dateTo.equals(currentItemDate)) {
                 filteredItems.add(items.get(i));
             }
         }

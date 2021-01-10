@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class ConsoleItemReader {
 
-
+//this class is used for testing the model and entering data manually
     public CostItem readItem() throws Exception {
         int itemID, cateID, price;
         String itemName, dateString, getCurrency = null;

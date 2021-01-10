@@ -14,28 +14,29 @@ public class Category {
         setCategoryName(cateName);
     }
 
-    // sets the CateID
+    // Sets the CateID
     public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
     }
 
-    // returns the CateID
+    // Returns the CateID
     public int getCategoryID() {
         return categoryID;
     }
 
-    // sets the CateName
+    // Sets the CateName
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
 
-    // returns the CateName
+    // Returns the CateName
     public String getCategoryName() {
         return categoryName;
     }
 
-    @Override//in DBConnector
+    //Return the category name to string
+    @Override
     public String toString() {
-        return "Category [ID=" + categoryID + ", CategoryName=" + categoryName + "]";
+        return categoryName;
     }
 }

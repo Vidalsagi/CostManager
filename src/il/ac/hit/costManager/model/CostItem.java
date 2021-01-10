@@ -1,7 +1,7 @@
 package il.ac.hit.costManager.model;
 
 public class CostItem {
-    private int itemID; //ID will be generated
+    private int itemID;
     public int cateID;
     private String itemName;
     private Currency ecurrency;
@@ -18,13 +18,12 @@ public class CostItem {
         this.ecurrency = eCurrency;
         this.price = Price;
         this.purchaseDate = PurchaseDate;
-        setItemID(ItemID);        //assigning id with a unique value
+        setItemID(ItemID);
         setCateID(CateID);
         setItemName(ItemName);
         setEcurrency(eCurrency);
         setPrice(Price);
         setPurchaseDate(PurchaseDate);
-        //..
     }
 
     public int getItemID() {
@@ -77,12 +76,11 @@ public class CostItem {
 
     @Override
     public String toString() {
-        return "Cost Item:" +
-                "ItemID= " + itemID + "Item Name=" + itemName + '\'' +
-                ", Price=" + price +
-                ", Currency=" + ecurrency +
-                ", Purchase Date=" + purchaseDate +
-                ')';
+        return "Cost Item: " +
+                "ItemID = " + itemID + " CateID = " + cateID + " Item Name = " + itemName +
+                ", Price = " + price +
+                ", Currency = " + ecurrency +
+                ", Purchase Date = " + purchaseDate;
     }
 }
 

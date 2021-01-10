@@ -22,7 +22,7 @@ class DerbyDBModelTest {
     }
 
     @org.junit.jupiter.api.Test
-    void addCostItem() throws CostManagerException, ClassNotFoundException {
+    void addCostItem() throws CostManagerException {
         Currency currency = Currency.ILS;
         CostItem item = new CostItem(15 ,13 ,"Sponge" ,currency ,15 , "15.1.2020");
         DerbyDBModel ItemDao = new DerbyDBModel();
@@ -31,7 +31,7 @@ class DerbyDBModelTest {
     }
 
     @org.junit.jupiter.api.Test
-    void deleteCostItem() throws CostManagerException, ClassNotFoundException {
+    void deleteCostItem() throws CostManagerException {
         Currency currency = Currency.EURO;
         CostItem item = new CostItem(15 ,13 ,"Sponge" , currency ,15 , "15.1.2020");
         DerbyDBModel ItemDao = new DerbyDBModel();
@@ -40,7 +40,7 @@ class DerbyDBModelTest {
     }
 
     @org.junit.jupiter.api.Test
-    void addItemUnsuccessfully() throws CostManagerException, ClassNotFoundException {
+    void addItemUnsuccessfully() throws CostManagerException {
         Currency currency = Currency.EURO;
         CostItem item = new CostItem(15 ,13 ,"ThisNameIsTooLongForAName" , currency ,15 , "15.1.2020");
         DerbyDBModel ItemDao = new DerbyDBModel();

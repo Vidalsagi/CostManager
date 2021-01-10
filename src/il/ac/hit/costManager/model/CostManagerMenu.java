@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 
 public class CostManagerMenu {
-
+    //This class is used for testing the model class
 
     public static void main(String[] args) throws Exception {
         DerbyDBModel itemDao = new DerbyDBModel();

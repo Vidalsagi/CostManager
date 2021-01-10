@@ -2,6 +2,8 @@ package il.ac.hit.costManager.model;
 
 import java.util.Scanner;
 
+//this class is used for testing the model and entering data manually
+
 public class ConsoleCateReader {
 
     public Category readCategory(){

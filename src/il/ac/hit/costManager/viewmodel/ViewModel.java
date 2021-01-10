@@ -5,6 +5,8 @@ import il.ac.hit.costManager.model.CostItem;
 import il.ac.hit.costManager.model.CostManagerException;
 import il.ac.hit.costManager.model.IModel;
 import il.ac.hit.costManager.view.IView;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
 
 import javax.swing.*;
 import java.text.ParseException;
@@ -33,6 +35,7 @@ public class ViewModel implements IViewModel {
         this.model = model;
     }
 
+    //Connect between model and view to add a new cost item
     @Override
     public void addCostItem(CostItem item) {
         pool.submit(new Runnable() {
@@ -51,11 +54,19 @@ public class ViewModel implements IViewModel {
 
     }
 
+    //Connect between model and view to add a new cost item to the list
     @Override
     public List<CostItem> checkItemList() throws CostManagerException {
         return model.getAllItems();
     }
 
+    //Connect to the model and get the categories list
+    @Override
+    public List<Category> checkCateList() throws CostManagerException {
+        return model.getAllCategories();
+    }
+
+    //Connect between model and view to load items and display them
     @Override
     public void loadItems() { //load items from database
         pool.submit(new Runnable() {
@@ -73,6 +84,7 @@ public class ViewModel implements IViewModel {
         });
     }
 
+    //Connect between model and view to load categories and display them
     @Override
     public void loadCategories() {
         pool.submit(new Runnable() {
@@ -90,24 +102,7 @@ public class ViewModel implements IViewModel {
         });
     }
 
-    @Override
-    public void updateItemsList() {
-        pool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    model.updateItemsList();
-                    view.showMessage("Items were updated on database successfully.");
-                    loadItems();
-                    CostItem[] items = model.getCostItems();
-                    view.showItems(items);
-                } catch (CostManagerException e) {
-                    view.showMessage(e.getMessage());
-                }
-            }
-        });
-    }
-
+    //Connect between model and view to delete a cost item
     @Override
     public void deleteCostItem(CostItem item) {
         pool.submit(new Runnable() {
@@ -126,6 +121,7 @@ public class ViewModel implements IViewModel {
 
     }
 
+    //Connect between model and view to add a new category
     @Override
     public void addCategory(Category category) {
         pool.submit(new Runnable() {
@@ -143,6 +139,7 @@ public class ViewModel implements IViewModel {
         });
     }
 
+    //Connect between model and view to delete a category
     @Override
     public void deleteCategory(Category category) {
         pool.submit(new Runnable() {
@@ -161,7 +158,24 @@ public class ViewModel implements IViewModel {
 
     }
 
+    //Connect between model and view to get the data for the pie chart
+    @Override
+    public void getDataSetPie() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DefaultPieDataset dataset1 = model.createDataset();
+                    view.showMessageCate("Data was added successfully to pie chart!");
+                    view.getPieChartDataSet(dataset1);
+                } catch (CostManagerException e) {
+                    view.showMessageCate(e.getMessage());
+                }
+            }
+        });
+    }
 
+    //Connect between model and view to display the report
     @Override
     public void handleReport(String DateFrom, String DateTo) throws ParseException, CostManagerException {
         List<CostItem> itemsReport = model.handleReport(DateFrom,DateTo);
