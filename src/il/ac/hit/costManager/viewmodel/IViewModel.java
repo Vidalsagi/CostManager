@@ -22,6 +22,7 @@ public interface IViewModel {
     public void deleteCostItem(CostItem item);
     public void addCategory(Category category);
     public void deleteCategory(Category category);
+    public void editCategory(Category category);
     public void getDataSetPie();
     public List<CostItem> checkItemList() throws CostManagerException;
     public List<Category> checkCateList() throws CostManagerException;

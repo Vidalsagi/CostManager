@@ -47,18 +47,37 @@ public class InMemoryModel implements IModel{
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
             statement.execute("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"' AND PurchaseDateCol = '" +
-            item.getPurchaseDate() + "'");
-            ResultSet rs = statement.executeQuery(
-                    "SELECT ItemIDCol,ITEMNAMECOL FROM ItemDB ORDER BY ItemIDCol");
+                    item.getPurchaseDate() + "'");
         }
         catch(Exception e) {
             e.printStackTrace();
         }
         for(int i = 0; i < items.size();i++){
-                if(item.getItemName().equals(items.get(i).getItemName())){
+            if(item.getItemName().equals(items.get(i).getItemName())){
                 items.remove(i);
                 break;
             }
+        }
+    }
+    //|||||||||||||||||||||||||||||||| This function will edit a cost item ||||||||||||||||||||||||||||||||
+
+    @Override
+    public void editCostItem(CostItem item, int newCateID) throws CostManagerException {
+        try
+        {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            String query = "update ItemDB set CateIDCol = ? where ItemNameCol = ?";
+            PreparedStatement preparedStmt = connection.prepareStatement(query);
+            preparedStmt.setInt   (1, newCateID);
+            preparedStmt.setString(2, item.getItemName());
+
+            // execute the java preparedstatement
+            preparedStmt.executeUpdate();
+            connection.close();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -70,12 +89,9 @@ public class InMemoryModel implements IModel{
         {
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            //=========== Run a code to check if CateDB exsists =============
-            //statement.execute("create table CateDB(CateIDCol int, CateNameCol varchar(40))");
             statement.execute("insert into CateDB(CateIDCol,CateNameCol) VALUES (" + category.getCategoryID()
                     + ",'" + category.getCategoryName()  + "')");
-            ResultSet rs = statement.executeQuery(
-                    "SELECT * FROM CateDB ORDER BY CateIDCol");
+
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -98,11 +114,47 @@ public class InMemoryModel implements IModel{
         }
         catch(Exception e) { e.printStackTrace(); }
 
+        //Remove the category also from list
         for(int i = 0; i < categories.size();i++){
-            if(category.getCategoryName().equals(categories.get(i).getCategoryName())){
+            if(category.getCategoryName().equals(categories.get(i).getCategoryName())){//find the category via name
                 categories.remove(i);
+                //Save the index of the deleted category
+                for(int j = i; j < categories.size(); j++){
+                    Category category1 = categories.get(i);
+                    for(int x = 0; x < items.size();x++){
+                        if(items.get(x).getCateID() == category1.getCategoryID()){
+                            editCostItem(items.get(x),j + 1);
+                            items.get(x).setCateID(j + 1);
+                        }
+                    }
+                    editCategory(category1);
+                    categories.get(j).setCategoryID(j + 1);
+                }
                 break;
             }
+        }
+
+    }
+
+    //|||||||||||||||||||||||||||||||| This function will edit a category ||||||||||||||||||||||||||||||||
+
+    @Override
+    public void editCategory(Category category) throws CostManagerException {
+        try
+        {
+            Connection connection = DriverManager.getConnection(protocol);
+            Statement statement = connection.createStatement();
+            String query = "update CateDB set CateIDCol = ? where CateNameCol = ?";
+            PreparedStatement preparedStmt = connection.prepareStatement(query);
+            preparedStmt.setInt   (1, category.getCategoryID());
+            preparedStmt.setString(2, category.getCategoryName());
+
+            // execute the java preparedstatement
+            preparedStmt.executeUpdate();
+            connection.close();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
         }
     }
 

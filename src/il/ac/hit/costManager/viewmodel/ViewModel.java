@@ -158,6 +158,22 @@ public class ViewModel implements IViewModel {
 
     }
 
+    //Edit the category
+    @Override
+    public void editCategory(Category category) {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    model.editCategory(category);
+                } catch (CostManagerException e) {
+                    view.showMessageCate(e.getMessage());
+                }
+            }
+        });
+
+    }
+
     //Connect between model and view to get the data for the pie chart
     @Override
     public void getDataSetPie() {

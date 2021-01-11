@@ -11,8 +11,10 @@ public interface IModel {
 
     public void addCostItem(CostItem item) throws CostManagerException;
     public void deleteCostItem(CostItem item) throws CostManagerException;
+    public void editCostItem(CostItem item, int newCateID) throws CostManagerException;
     public void addCategory(Category category) throws CostManagerException;
     public void deleteCategory(Category category) throws CostManagerException;
+    public void editCategory(Category category) throws CostManagerException;
     public void loadItems() throws CostManagerException;
     public void loadCategories() throws CostManagerException;
     public DefaultPieDataset createDataset() throws CostManagerException;

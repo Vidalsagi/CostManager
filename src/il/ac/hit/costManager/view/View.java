@@ -42,11 +42,6 @@ public class View implements IView {
     public void showReportItems (List<CostItem> itemsReport){ui.showReportItems(itemsReport); };
 
 
-    //This will recieve the selected dates from action listener and will call the vm handleReport
-    @Override
-    public void showReport(String dateFrom , String dateTo) throws ParseException, CostManagerException {
-    }
-
     //This func is related to piechart
     @Override
     public void getPieChartDataSet(DefaultPieDataset dataset) {
@@ -1007,7 +1002,7 @@ public class View implements IView {
                             }
                         }
                         //Get category ID, doesnt really matter here.
-                        for(int i = 0; i < vm.checkItemList().size();i++){//delete all items with the deleted cateID
+                        for(int i = 0; i < vm.checkItemList().size();i++){ //delete all items with the deleted cateID
                             if(vm.checkItemList().get(i).getCateID() == cateID){
                                 vm.deleteCostItem(vm.checkItemList().get(i));
                                 i--;
@@ -1015,8 +1010,8 @@ public class View implements IView {
                         }
                         Category category = new Category(cateID, cateName);
                         vm.deleteCategory(category);
-                        emptyItemListCate(); //Remove all the categories in combobox of items
-                        getItemList(); //Update combobox in item tab of categories
+                        emptyItemListCate();     //Remove all the categories in combobox of items
+                        getItemList();           //Update combobox in item tab of categories
 
                     } catch (NumberFormatException ex) {
                         View.this.showMessageCate("problem with entered ID... " + ex.getMessage());
@@ -1072,7 +1067,10 @@ public class View implements IView {
                         int countItems[] = new int[vm.checkCateList().size() + 2];
                         List<Category> newCateList = vm.checkCateList();
                         //add values according to cateid in the couting array so later add it to the piechart
-                        for(int i = 0; i < filteredItems.size();i++) countItems[filteredItems.get(i).getCateID()]++;
+                        for(int i = 0; i < filteredItems.size();i++)
+                        {
+                            countItems[filteredItems.get(i).getCateID()]++;
+                        }
                         //add the items according to order
                         for(int i = 0; i < newCateList.size(); i++){
                             result.setValue(newCateList.get(i).getCategoryName(),countItems[i + 1]);
@@ -1154,13 +1152,16 @@ public class View implements IView {
 
         //This method will load the combobox categories in items tab
         public void getItemList() throws CostManagerException {
-                vm.loadCategories();
-                cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
+            vm.loadCategories();
+            cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
         }
 
         //This method will empty the combobox of categories in items tab
         public void emptyItemListCate() throws CostManagerException {
             vm.loadCategories();
+            for(int i = 0; i < vm.checkCateList().size() - 1; i++) {
+                cbItemsCate.removeItemAt(0);
+            }
             cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
 
         }

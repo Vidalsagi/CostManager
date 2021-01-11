@@ -19,9 +19,7 @@ public interface IView {
     public void showCategories(Category[] categories);
     public void showMessageItemsLoaded(String message);
     public void showReportItems(List<CostItem> itemsReport);
-    public void showReport(String dateFrom, String dateTo) throws ParseException, CostManagerException;
     public void getPieChartDataSet(DefaultPieDataset dateset);
 
-    //..
 }
 

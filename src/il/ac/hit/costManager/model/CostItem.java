@@ -77,7 +77,7 @@ public class CostItem {
     @Override
     public String toString() {
         return "Cost Item: " +
-                "ItemID = " + itemID + " CateID = " + cateID + " Item Name = " + itemName +
+                " Item Name = " + itemName +
                 ", Price = " + price +
                 ", Currency = " + ecurrency +
                 ", Purchase Date = " + purchaseDate;

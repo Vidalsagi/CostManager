@@ -125,6 +125,11 @@ public class DerbyDBModel implements IModel {
         }
     }
 
+    @Override
+    public void editCostItem(CostItem item, int newCateID) throws CostManagerException {
+
+    }
+
 
     @Override
     public void addCategory(Category category) throws CostManagerException {
@@ -158,6 +163,10 @@ public class DerbyDBModel implements IModel {
         catch(Exception e) { e.printStackTrace(); }
     }
 
+    @Override
+    public void editCategory(Category category) throws CostManagerException {
+
+    }
 
 
     @Override
