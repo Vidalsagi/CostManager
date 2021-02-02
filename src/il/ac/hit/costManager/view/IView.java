@@ -12,14 +12,29 @@ import java.util.List;
 
 public interface IView {
 
+    //This will connect the view with the viewmodel
     public void setViewModel(IViewModel vm);
-    public void showMessage(String text);
-    public void showMessageCate(String text);
-    public void showItems(CostItem[] items);
-    public void showCategories(Category[] categories);
-    public void showMessageItemsLoaded(String message);
+
+    //This will show the report of items in selected dates
     public void showReportItems(List<CostItem> itemsReport);
+
+    //This func is related to piechart
     public void getPieChartDataSet(DefaultPieDataset dateset);
+
+    //This func will display msgs related to categories
+    public void showMessageCate(String text);
+
+    //This func will display msgs related to items
+    public void showMessage(String text);
+
+    //This func will display the items in database
+    public void showItems(List<CostItem> items) throws CostManagerException;
+
+    //This func will display the categories in database
+    public void showCategories(List<Category>  categories);
+
+    //This func will display a msg when all items are loaded
+    public void showMessageItemsLoaded(String message);
 
 }
 

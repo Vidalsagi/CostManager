@@ -15,10 +15,7 @@ import org.jfree.util.Rotation;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,13 +59,13 @@ public class View implements IView {
 
     //This func will display the items in database
     @Override
-    public void showItems(CostItem[] items) {
+    public void showItems(List<CostItem> items) throws CostManagerException {
         ui.showItems(items);
     }
 
     //This func will display the categories in database
     @Override
-    public void showCategories(Category[] categories) {
+    public void showCategories(List<Category>  categories) {
         ui.showCategories(categories);
     }
 
@@ -97,7 +94,7 @@ public class View implements IView {
 
     public class ApplicationUI //implements IView
     {
-
+        //need to replace the textarea with JTable on all windows
         /**
          * Set General components
          */
@@ -120,6 +117,7 @@ public class View implements IView {
          */
 
         private JScrollPane categoriesMenu;
+        private JTable tableCategories;
         private JTextArea textAreaCate;
         private JTextField tfCategory;
         private JLabel lblCategoryName;
@@ -132,6 +130,7 @@ public class View implements IView {
          * panel Report
          */
 
+        private JTable tableReport;
         private JTextArea textAreaReport;
         private JButton btnGenerateReport;
         private JLabel lblSetDatesReport;
@@ -156,6 +155,7 @@ public class View implements IView {
          * panel Items
          */
 
+        private JTable tableItems;
         private JTextArea textAreaItems;
         private JScrollPane itemMenu;
         private JLabel lblItemName;
@@ -225,6 +225,7 @@ public class View implements IView {
             /* PanelCate related (Categories) */
 
             //Set the table in categories tab
+            tableCategories = new JTable();
             textAreaCate = new JTextArea();
             categoriesMenu = new JScrollPane(textAreaCate);
             //tableCate = new JTable();
@@ -247,6 +248,7 @@ public class View implements IView {
             /* PanelItem related (Items) */
             //In items tab add table for adding data
 
+            tableItems = new JTable();
             textAreaItems = new JTextArea();
             itemMenu = new JScrollPane(textAreaItems);
 
@@ -288,6 +290,7 @@ public class View implements IView {
             cateItemsMenuCombo = new JComboBox();
 
             /* PanelCate related (Report) */
+            tableReport = new JTable();
             textAreaReport = new JTextArea();
             lblSetDatesReport = new JLabel("Set dates range to print the report");
             spReport = new JScrollPane();
@@ -598,7 +601,7 @@ public class View implements IView {
             textAreaItems.setEditable(false);
             textAreaItems.setBackground(Color.lightGray);
             textAreaItems.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-            itemMenu.setViewportView(textAreaItems);
+            itemMenu.setViewportView(tableItems);
 
             //in items tab add settings to the buttom "add"
             btnAddItems.setFont(new Font("Cooper Black", Font.PLAIN, 30));
@@ -1027,13 +1030,14 @@ public class View implements IView {
                             + "." + cbYYYYFromReport.getSelectedItem().toString() ;
                     String purchaseDateTo = cbDDToReport.getSelectedItem().toString() + "." + cbMMToReport.getSelectedItem().toString()
                             + "." + cbYYYYToReport.getSelectedItem().toString() ;
+                   /*
                     try {
                         vm.handleReport(purchaseDateFrom,purchaseDateTo);
-                    } catch (ParseException parseException) {
-                        parseException.printStackTrace();
-                    } catch (CostManagerException costManagerException) {
+                     catch (CostManagerException costManagerException) {
                         costManagerException.printStackTrace();
                     }
+
+                   */
                 }
 
             });
@@ -1128,7 +1132,7 @@ public class View implements IView {
         }
 
         //This method will show all the avilable cost items in db
-        public void showItems(CostItem[] items) {
+        public void showItems(List<CostItem> items) throws CostManagerException {
             StringBuilder sb = new StringBuilder();
             for (CostItem item : items) {
                 sb.append(item.toString());
@@ -1167,7 +1171,7 @@ public class View implements IView {
         }
 
         //This method will show all the available categories in db
-        public void showCategories(Category[] categories) {
+        public void showCategories(List<Category> categories) {
             StringBuilder sb = new StringBuilder();
             for (Category category : categories) {
                 sb.append(category.toString());

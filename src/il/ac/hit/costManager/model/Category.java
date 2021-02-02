@@ -37,6 +37,6 @@ public class Category {
     //Return the category name to string
     @Override
     public String toString() {
-        return categoryName;
+        return "Category [ID=" + categoryID + ", CategoryName=" + categoryName + "]";
     }
 }

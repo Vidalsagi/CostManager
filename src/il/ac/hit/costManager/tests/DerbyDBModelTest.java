@@ -1,11 +1,11 @@
 package il.ac.hit.costManager.tests;
 
 import il.ac.hit.costManager.model.Currency;
+import il.ac.hit.costManager.model.DerbyDBModel;
 import org.junit.After;
 import org.junit.Before;
 import il.ac.hit.costManager.model.CostItem;
 import il.ac.hit.costManager.model.CostManagerException;
-import il.ac.hit.costManager.model.DerbyDBModel;
 
 import static org.junit.Assert.assertEquals;
 
