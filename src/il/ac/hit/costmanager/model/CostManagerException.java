@@ -1,4 +1,4 @@
-package il.ac.hit.costManager.model;
+package il.ac.hit.costmanager.model;
 
 //Expception thrown from the interface IModel
 public class CostManagerException extends Exception {

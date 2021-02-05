@@ -1,4 +1,4 @@
-package il.ac.hit.costManager.view;
+package il.ac.hit.costmanager.view;
 
 import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;

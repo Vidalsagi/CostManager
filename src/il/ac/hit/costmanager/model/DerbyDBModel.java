@@ -1,7 +1,6 @@
-package il.ac.hit.costManager.model;
+package il.ac.hit.costmanager.model;
 
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -15,40 +14,55 @@ public class DerbyDBModel implements IModel{
 
     public static String driver = "org.apache.derby.jdbc.ClientDriver";
     public static String protocol = "jdbc:derby://localhost:1527/CostManager;create=true";
+    private Connection connection;
+    private Statement statement;
+    private ResultSet rs;
 
-    //|||||||||||||||||||||||||||||||| This function will add item from the list ||||||||||||||||||||||||||||||||
+    /**
+     * This function will add item to the list
+     * @param item
+     * @throws CostManagerException
+     */
     @Override
     public void addCostItem(CostItem item) throws CostManagerException {
         try
         {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
             statement.execute("insert into ItemDB(ITEMIDCOL,CATEIDCOL," +
                     "ITEMNAMECOL,CURRENCYCOL,PRICECOL,PurchaseDateCol) VALUES (" + item.getItemID() + ","
                     + item.getCateID() + "," + "'" + item.getItemName() + "','" +
                     item.getEcurrency() + "'," + item.getPrice() + ",'" +
                     item.getPurchaseDate() + "')");
-            ResultSet rs = statement.executeQuery(
+            rs = statement.executeQuery(
                     "SELECT ItemIDCol,ITEMNAMECOL FROM ItemDB ORDER BY ItemIDCol");
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't add a new item.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
     }
 
-    //|||||||||||||||||||||||||||||||| This function will remove item from the list ||||||||||||||||||||||||||||||||
+    /**
+     * This function will remove item from the list
+     * @param item
+     * @throws CostManagerException
+     */
     @Override
     public void deleteCostItem(CostItem item) throws CostManagerException {
         try {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
             statement.execute("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"' AND PurchaseDateCol = '" +
                     item.getPurchaseDate() + "'");
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't delete item.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
         /*
         for(int i = 0; i < items.size();i++){
@@ -60,14 +74,19 @@ public class DerbyDBModel implements IModel{
 
          */
     }
-    //|||||||||||||||||||||||||||||||| This function will edit a cost item via id and name ||||||||||||||||||||||||||||||||
 
+    /**
+     * This function will edit a cost item
+     * @param item
+     * @param newCateID
+     * @throws CostManagerException
+     */
     @Override
     public void editCostItem(CostItem item, int newCateID) throws CostManagerException {
         try
         {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
             String query = "update ItemDB set CateIDCol = ? where ItemNameCol = ?";
             PreparedStatement preparedStmt = connection.prepareStatement(query);
             preparedStmt.setInt   (1, newCateID);
@@ -80,17 +99,22 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't edit item.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
     }
 
-    //|||||||||||||||||||||||||||||||| This function will add category to the list ||||||||||||||||||||||||||||||||
-
+    /**
+     * This function will add category to the list
+     * @param category
+     * @throws CostManagerException
+     */
     @Override
     public void addCategory(Category category) throws CostManagerException {
         try
         {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
             statement.execute("insert into CateDB(CateIDCol,CateNameCol) VALUES (" + category.getCategoryID()
                     + ",'" + category.getCategoryName()  + "')");
 
@@ -98,25 +122,32 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't add a new category.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
     }
 
-    //|||||||||||||||||||||||||||||||| This function will delete category from the list ||||||||||||||||||||||||||||||||
-
+    /**
+     * This function will delete category from the list
+     * @param category
+     * @throws CostManagerException
+     */
     @Override
     public void deleteCategory(Category category) throws CostManagerException {
         try {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
             //=========== Run a code to check if CateDB exsists =============
             //statement.execute("create table CateDB(CateIDCol int, CateNameCol varchar(40))");
             statement.execute("DELETE FROM CateDB WHERE CateNameCol = '" + category.getCategoryName()+"'");
-            ResultSet rs = statement.executeQuery(
+            rs = statement.executeQuery(
                     "SELECT * FROM ItemDB ORDER BY CateIDCol");
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't delete category.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
 
         //Remove the category also from list
@@ -144,14 +175,17 @@ public class DerbyDBModel implements IModel{
          */
     }
 
-    //|||||||||||||||||||||||||||||||| This function will edit a category ||||||||||||||||||||||||||||||||
-
+    /**
+     * This function will edit a category
+     * @param category
+     * @throws CostManagerException
+     */
     @Override
     public void editCategory(Category category) throws CostManagerException {
         try
         {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
             String query = "update CateDB set CateIDCol = ? where CateNameCol = ?";
             PreparedStatement preparedStmt = connection.prepareStatement(query);
             preparedStmt.setInt   (1, category.getCategoryID());
@@ -164,6 +198,8 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't edit category.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
     }
 
@@ -233,9 +269,12 @@ public class DerbyDBModel implements IModel{
 
 
  */
-    //|||||||||||||||||||||||||||||||| This function is used to create Dataset for the pieChart ||||||||||||||||||||||||||||||||
 
-
+    /**
+     * This function is used to create Dataset for the pieChart
+     * @return DefaultPieDataset
+     * @throws CostManagerException
+     */
     @Override
     public DefaultPieDataset createDataset() throws CostManagerException {
         DefaultPieDataset result = new DefaultPieDataset();
@@ -275,16 +314,21 @@ public class DerbyDBModel implements IModel{
  */
     //|||||||||||||||||||||||||||||||| This function is used to load the items from database and return the list ||||||||||||||||||||||||||||||||
 
-
+    /**
+     * This function is used to load the items from database and return the list
+     * @return List<CostItem></CostItem>
+     * @throws CostManagerException
+     */
     @Override
     public List<CostItem> getAllItems() throws CostManagerException {
+        //Define a new list called newList of CostItem
         List<CostItem> newList = new LinkedList<>();
         try
         {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
             int itemID = 1;
-            ResultSet rs = statement.executeQuery(
+            rs = statement.executeQuery(
                     "SELECT * FROM ItemDB ORDER BY ItemIDCol");
             while(rs.next())
             {
@@ -308,21 +352,26 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't load item list.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
         return newList;
     }
 
-    //|||||||||||||||||||||||||||||||| This function is used to load the categories from database and return the list ||||||||||||||||||||||||||||||||
-
-
+    /**
+     * This function is used to load the categories from database and return the list
+     * @return List<Category></Category>
+     * @throws CostManagerException
+     */
     @Override
     public List<Category> getAllCategories() throws CostManagerException {
+        //Define a new list called newList of cagegory
         List<Category> newList = new LinkedList<>();
         try
         {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
+            rs = statement.executeQuery(
                     "SELECT * FROM CateDB ORDER BY CateIDCol");
             while(rs.next())
             {
@@ -337,18 +386,26 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't load categories list.");
+        } finally{
+            closeConnectionAndStatement(connection, statement);
         }
         return newList;
     }
 
-    //|||||||||||||||||||||||||||||||| This function is used to handle the date ranges from the report/piechart ||||||||||||||||||||||||||||||||
-
+    /**
+     * This function is used to handle the date ranges from the report/piechart
+     * @param sDateFrom
+     * @param sDateTo
+     * @return List<CostItem></CostItem>
+     * @throws CostManagerException
+     */
     @Override
     public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws CostManagerException {
         List<CostItem> filteredItems = getAllItems();
-        /*
-            DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-            Date dateFrom = format.parse(sDateFrom);
+        DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        Date dateFrom = null;
+        try {
+            dateFrom = format.parse(sDateFrom);
             Date dateTo = format.parse(sDateTo);
             //loadItems();
             for (int i = 0; i < getAllItems().size(); i++) {
@@ -357,9 +414,31 @@ public class DerbyDBModel implements IModel{
                     filteredItems.add(getAllItems().get(i));
                 }
             }
-
-
-         */
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return filteredItems;
     }
+
+    /**
+     * Makes sure connection and statement are close
+     * @param connection
+     * @param statement
+     * @throws CostManagerException
+     */
+    public void closeConnectionAndStatement(Connection connection, Statement statement) throws CostManagerException{
+        if(statement != null) try{
+            statement.close();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new CostManagerException("Error connection.");
+        }
+        if(connection != null) try{
+            connection.close();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new CostManagerException("Error statement.");
+        }
+    }
+
 }

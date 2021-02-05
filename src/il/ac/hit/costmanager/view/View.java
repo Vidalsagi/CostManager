@@ -1,10 +1,10 @@
-package il.ac.hit.costManager.view;
+package il.ac.hit.costmanager.view;
 
-import il.ac.hit.costManager.model.Category;
-import il.ac.hit.costManager.model.CostItem;
-import il.ac.hit.costManager.model.CostManagerException;
-import il.ac.hit.costManager.model.Currency;
-import il.ac.hit.costManager.viewmodel.IViewModel;
+import il.ac.hit.costmanager.model.Category;
+import il.ac.hit.costmanager.model.CostItem;
+import il.ac.hit.costmanager.model.CostManagerException;
+import il.ac.hit.costmanager.model.Currency;
+import il.ac.hit.costmanager.viewmodel.IViewModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -12,7 +12,6 @@ import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.util.Rotation;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -45,13 +44,8 @@ public class View implements IView {
         //vm.getDataSetPie(dataset);
     }
 
-    //This func will display msgs related to categories
-    @Override
-    public void showMessageCate(String text) {
-        ui.showMessageCate(text);
-    }
 
-    //This func will display msgs related to items
+    //This func will display msgs related to errors
     @Override
     public void showMessage(String text) {
         ui.showMessage(text);
@@ -59,7 +53,7 @@ public class View implements IView {
 
     //This func will display the items in database
     @Override
-    public void showItems(List<CostItem> items) throws CostManagerException {
+    public void showItems(List<CostItem> items) {
         ui.showItems(items);
     }
 
@@ -969,9 +963,9 @@ public class View implements IView {
                         getItemList();           //Update combobox in item tab of categories
 
                     } catch (NumberFormatException ex) {
-                        View.this.showMessageCate("problem with entered ID... " + ex.getMessage());
+                        View.this.showMessage("problem with entered ID... " + ex.getMessage());
                     } catch (CostManagerException ex) {
-                        View.this.showMessageCate("problem with entered data... problem with description... " + ex.getMessage());
+                        View.this.showMessage("problem with entered data... problem with description... " + ex.getMessage());
                     }
                 }
             });
@@ -1017,9 +1011,9 @@ public class View implements IView {
                         getItemList();           //Update combobox in item tab of categories
 
                     } catch (NumberFormatException ex) {
-                        View.this.showMessageCate("problem with entered ID... " + ex.getMessage());
+                        View.this.showMessage("problem with entered ID... " + ex.getMessage());
                     } catch (CostManagerException ex) {
-                        View.this.showMessageCate("problem with entered data... problem with description... " + ex.getMessage());
+                        View.this.showMessage("problem with entered data... problem with description... " + ex.getMessage());
                     }
                 }
             });
@@ -1030,14 +1024,14 @@ public class View implements IView {
                             + "." + cbYYYYFromReport.getSelectedItem().toString() ;
                     String purchaseDateTo = cbDDToReport.getSelectedItem().toString() + "." + cbMMToReport.getSelectedItem().toString()
                             + "." + cbYYYYToReport.getSelectedItem().toString() ;
-                   /*
+
                     try {
                         vm.handleReport(purchaseDateFrom,purchaseDateTo);
-                     catch (CostManagerException costManagerException) {
-                        costManagerException.printStackTrace();
+                    } catch (CostManagerException exception) {
+                        exception.printStackTrace();
+                        showMessage(exception.getMessage());
                     }
 
-                   */
                 }
 
             });
@@ -1117,22 +1111,8 @@ public class View implements IView {
             }
         }
 
-        //This method will show all the avilable categories in db
-        public void showMessageCate(String text) {
-            if (SwingUtilities.isEventDispatchThread()) {
-                tfMessage.setText(text);
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        tfMessage.setText(text);
-                    }
-                });
-            }
-        }
-
         //This method will show all the avilable cost items in db
-        public void showItems(List<CostItem> items) throws CostManagerException {
+        public void showItems(List<CostItem> items){
             StringBuilder sb = new StringBuilder();
             for (CostItem item : items) {
                 sb.append(item.toString());

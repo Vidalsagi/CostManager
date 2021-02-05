@@ -1,15 +1,13 @@
-package il.ac.hit.costManager.viewmodel;
+package il.ac.hit.costmanager.viewmodel;
 
-import il.ac.hit.costManager.model.Category;
-import il.ac.hit.costManager.model.CostItem;
-import il.ac.hit.costManager.model.CostManagerException;
-import il.ac.hit.costManager.model.IModel;
-import il.ac.hit.costManager.view.IView;
+import il.ac.hit.costmanager.model.Category;
+import il.ac.hit.costmanager.model.CostItem;
+import il.ac.hit.costmanager.model.CostManagerException;
+import il.ac.hit.costmanager.model.IModel;
+import il.ac.hit.costmanager.view.IView;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
-import javax.swing.*;
-import java.text.ParseException;
-import java.util.LinkedList;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,7 +41,8 @@ public class ViewModel implements IViewModel {
             @Override
             public void run() {
                 try {
-                    model.addCostItem(item); //Add to the DB the new CostItem
+                    //Add to the DB the new CostItem
+                    model.addCostItem(item);
                     view.showMessage("Cost item was added successfully");
                     //get the new list of items
                     List<CostItem> items = model.getAllItems();
@@ -54,9 +53,7 @@ public class ViewModel implements IViewModel {
                 }
             }
         });
-
     }
-
 
     //Delete an item
     @Override
@@ -68,7 +65,6 @@ public class ViewModel implements IViewModel {
                     //delete the item according to name and id from database
                     model.deleteCostItem(item);
                     view.showMessage("Cost item was deleted successfully");
-                    //CostItem[] items = model.getCostItems();
                     //send a list from the model to the view for a new print on screen
                     List<CostItem> items = model.getAllItems();
                     view.showItems(items);
@@ -91,7 +87,7 @@ public class ViewModel implements IViewModel {
                     List<CostItem> items = model.getAllItems();
                     view.showItems(items);
                 } catch (CostManagerException e) {
-                    view.showMessageCate(e.getMessage());
+                    view.showMessage(e.getMessage());
                 }
             }
         });
@@ -124,12 +120,12 @@ public class ViewModel implements IViewModel {
             public void run() {
                 try {
                     model.addCategory(category);
-                    view.showMessageCate("Category was added successfully");
+                    view.showMessage("Category was added successfully");
                     //Category[] categories = model.getCategories();
                     List<Category> categories = model.getAllCategories();
                     view.showCategories(categories);
                 } catch (CostManagerException e) {
-                    view.showMessageCate(e.getMessage());
+                    view.showMessage(e.getMessage());
                 }
             }
         });
@@ -144,12 +140,12 @@ public class ViewModel implements IViewModel {
                 try {
                     //Delete a category from DB
                     model.deleteCategory(category);
-                    view.showMessageCate("Category was deleted successfully");
+                    view.showMessage("Category was deleted successfully");
                     //Get the list of categories from the DB to view and print it
                     List<Category> categories = model.getAllCategories();
                     view.showCategories(categories);
                 } catch (CostManagerException e) {
-                    view.showMessageCate(e.getMessage());
+                    view.showMessage(e.getMessage());
                 }
             }
         });
@@ -168,7 +164,7 @@ public class ViewModel implements IViewModel {
                     List<Category> categories = model.getAllCategories();
                     view.showCategories(categories);
                 } catch (CostManagerException e) {
-                    view.showMessageCate(e.getMessage());
+                    view.showMessage(e.getMessage());
                 }
             }
         });
@@ -187,7 +183,7 @@ public class ViewModel implements IViewModel {
                     view.showCategories(categories);
                     view.showMessage("Categories were loaded from model.");
                 } catch (CostManagerException e) {
-                    view.showMessageCate(e.getMessage());
+                    view.showMessage(e.getMessage());
                 }
             }
         });
@@ -201,10 +197,10 @@ public class ViewModel implements IViewModel {
             public void run() {
                 try {
                     DefaultPieDataset dataset1 = model.createDataset();
-                    view.showMessageCate("Data was added successfully to pie chart!");
+                    view.showMessage("Data was added successfully to pie chart!");
                     view.getPieChartDataSet(dataset1);
                 } catch (CostManagerException e) {
-                    view.showMessageCate(e.getMessage());
+                    view.showMessage(e.getMessage());
                 }
             }
         });
@@ -212,22 +208,52 @@ public class ViewModel implements IViewModel {
 
     //Will Give a list of items to print on screen
     @Override
-    public List<CostItem> checkItemList() throws CostManagerException {
-        return model.getAllItems();
+    public void checkItemList(){
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<CostItem> itemList = model.getAllItems();
+                    //need to send the list to view somehow
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
     }
 
     //Will Give a list of Categories to print on screen
     @Override
-    public List<Category> checkCateList() throws CostManagerException {
-        return model.getAllCategories();
+    public void checkCateList(){
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<Category> cateList = model.getAllCategories();
+                    //need to send the list to view somehow
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
     }
 
 
     //Set dates on the report and bring back data from the DB
     @Override
-    public void handleReport(String DateFrom, String DateTo) throws CostManagerException {
-        List<CostItem> itemsReport = model.handleReport(DateFrom,DateTo);
-        view.showReportItems(itemsReport);
+    public void handleReport(String DateFrom, String DateTo) {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<CostItem> itemsReport = model.handleReport(DateFrom,DateTo);
+                    view.showReportItems(itemsReport);
+                    view.showMessage("Displaying the report.");
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
     }
 }
 
