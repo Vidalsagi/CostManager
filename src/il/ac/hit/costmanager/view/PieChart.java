@@ -14,6 +14,7 @@ public class PieChart extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+
     public PieChart(String applicationTitle, String chartTitle) {
         super(applicationTitle);
         // This will create the dataset

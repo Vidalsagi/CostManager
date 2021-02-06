@@ -100,10 +100,10 @@ public class ViewModel implements IViewModel {
         pool.submit(new Runnable() {
             @Override
             public void run() {
-                view.showMessage("Cost items were loaded from model.");
                 try {
                     List<CostItem> items = model.getAllItems();
                     view.showItems(items);
+                    view.showMessage("Cost items were loaded from model.");
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -215,6 +215,7 @@ public class ViewModel implements IViewModel {
                 try {
                     List<CostItem> itemList = model.getAllItems();
                     //need to send the list to view somehow
+
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -231,6 +232,7 @@ public class ViewModel implements IViewModel {
                 try {
                     List<Category> cateList = model.getAllCategories();
                     //need to send the list to view somehow
+
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -238,15 +240,20 @@ public class ViewModel implements IViewModel {
         });
     }
 
-
-    //Set dates on the report and bring back data from the DB
+    /**
+     * Set dates on the report and bring back data from the DB
+     * @param DateFrom is String of the date from
+     * @param DateTo is String of the date from
+     */
     @Override
     public void handleReport(String DateFrom, String DateTo) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
+                    //Define a list of items, take it from the model and add the strings DateFrom DateTo
                     List<CostItem> itemsReport = model.handleReport(DateFrom,DateTo);
+                    //Display the report in the panel
                     view.showReportItems(itemsReport);
                     view.showMessage("Displaying the report.");
                 } catch (CostManagerException e) {

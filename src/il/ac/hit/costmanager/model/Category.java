@@ -2,6 +2,7 @@ package il.ac.hit.costmanager.model;
 
 import java.sql.PreparedStatement;
 
+
 public class Category {
 
     public String categoryName;
@@ -9,7 +10,7 @@ public class Category {
     private PreparedStatement insertNewCategory;
 
     /**
-     * / constructor
+     * constructor
      * @param cateID
      * @param cateName
      */

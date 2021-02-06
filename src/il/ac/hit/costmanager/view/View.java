@@ -88,9 +88,8 @@ public class View implements IView {
 
     public class ApplicationUI //implements IView
     {
-        //need to replace the textarea with JTable on all windows
-        /**
-         * Set General components
+        /*
+          Set General components
          */
 
         private JFrame frame;             //main frame of the application
@@ -106,8 +105,8 @@ public class View implements IView {
         private JMenuItem mntmExit;       //the exit button on the menu bar
         private JTabbedPane tabbedPane;   //the tabs panel
 
-        /**
-         * panel Categories
+        /*
+         panel Categories
          */
 
         private JScrollPane categoriesMenu;
@@ -120,8 +119,8 @@ public class View implements IView {
         private JButton btnAddCategory;
         private JButton btnDeleteCategory;
 
-        /**
-         * panel Report
+        /*
+          panel Report
          */
 
         private JTable tableReport;
@@ -138,15 +137,15 @@ public class View implements IView {
         private JComboBox cbMMToReport;
         private JComboBox cbYYYYToReport;
 
-        /**
-         * panel Messages
+        /*
+          panel Messages
          */
 
         private JLabel lbMessage;
         private JTextField tfMessage;
 
-        /**
-         * panel Items
+        /*
+          panel Items
          */
 
         private JTable tableItems;
@@ -171,8 +170,8 @@ public class View implements IView {
         private JComboBox cateItemsMenuCombo;
         private JComboBox cbItemsCate;
 
-        /**
-         * panel PieChart
+        /*
+          panel PieChart
          */
 
         private PieDataset dataset;
@@ -191,6 +190,9 @@ public class View implements IView {
         private JComboBox cbMMToPieChart;
         private JComboBox cbYYYYToPieChart;
 
+        /*
+        Application UI Method
+         */
         public ApplicationUI() {
             //creating the window
             frame = new JFrame("CostManager");
@@ -509,7 +511,6 @@ public class View implements IView {
             mntmExit.setBackground(SystemColor.BLACK);
             mntmExit.setForeground(Color.LIGHT_GRAY);
 
-
             //Add the buttons to mnFile
             mnFile.add(mntmExit);
 
@@ -595,7 +596,7 @@ public class View implements IView {
             textAreaItems.setEditable(false);
             textAreaItems.setBackground(Color.lightGray);
             textAreaItems.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-            itemMenu.setViewportView(tableItems);
+            itemMenu.setViewportView(textAreaItems);
 
             //in items tab add settings to the buttom "add"
             btnAddItems.setFont(new Font("Cooper Black", Font.PLAIN, 30));
@@ -794,16 +795,8 @@ public class View implements IView {
                         if (itemName == null || itemName.length() == 0) {
                             throw new CostManagerException("Item name cannot be empty");
                         }
-                        //Generate itemID
-                        int itemID = 1;
-                        List<CostItem> newItemList = vm.checkItemList();
-                        for (int i = 1; i < newItemList.size() + 1; i++){
-                            if(newItemList.get(i-1).getItemID() != i) {
-                                itemID = i;
-                                break;
-                            }
-                            if(i == newItemList.size())itemID = i + 1;
-                        }
+                        //ItemID will be generated in model, for now set it 0
+                        int itemID = 0;
                         //Get price
                         double sum = Double.parseDouble(tfItemPrice.getText());
                         String chosenCurrency = comboCurrencyOptions.getSelectedItem().toString();
@@ -823,42 +816,13 @@ public class View implements IView {
                                 currency = Currency.USD;
 
                         }
-                        //Get category name
-                        String categoryName = cbItemsCate.getSelectedItem().toString();
-                        //Get category ID
-                        if (categoryName == null || categoryName.length() == 0) {
-                            throw new CostManagerException("Category name cannot be empty");
-                        }
+                        //CateID will be generated at model, set it 0 for now
                         int cateID = 0;
-                        for(int i = 0; i < vm.checkCateList().size(); i++){
-                            if(categoryName.equals(vm.checkCateList().get(i).getCategoryName())){
-                                cateID = vm.checkCateList().get(i).getCategoryID();
-                                break;
-                            }
-                        }
-                        if(cateID == 0) {
-                            //Get category ID
-                            cateID = 1;
-                            List<Category> newCateList = vm.checkCateList();
-                            for (int i = 1; i < newCateList.size() + 1; i++){
-                                if(newCateList.get(i-1).getCategoryID() != i) {
-                                    cateID = i;
-                                    break;
-                                }
-                                if(i == newCateList.size())cateID = i + 1;
-                            }
-                        }
                         //Add purchase date
                         String purchaseDate = cbDDItems.getSelectedItem().toString() + "." + cbMMItems.getSelectedItem().toString()
                                 + "." + cbYYYYItems.getSelectedItem().toString() ;
                         CostItem item = new CostItem(itemID, cateID, itemName, currency,
                                 sum, purchaseDate);
-                        //Check if item exists already by name
-                        List<CostItem> newList = vm.checkItemList();
-                        for(int i=0;i< newList.size();i++){
-                            if(newList.get(i).getItemName().equals(itemName) && newList.get(i).getPurchaseDate().equals(purchaseDate))
-                                throw new CostManagerException("Item Name already exsists in the same date in system.");
-                        }
                         vm.addCostItem(item);
 
                     } catch (NumberFormatException ex) {
@@ -880,33 +844,10 @@ public class View implements IView {
                         if (itemName == null || itemName.length() == 0) {
                             throw new CostManagerException("Item name cannot be empty");
                         }
-                        //Make sure the name exsists in database
-                        for(int i = 0; i < vm.checkItemList().size(); i++) {
-                            if(itemName.equals(vm.checkItemList().get(i).getItemName())){
-                                if(purchaseDate.equals(vm.checkItemList().get(i).getPurchaseDate())) break;
-                            }
-                            if(i == vm.checkItemList().size() - 1)
-                            {
-                                if(itemName.equals(vm.checkItemList().get(i).getItemName())){
-                                    if(purchaseDate.equals(vm.checkItemList().get(i).getPurchaseDate())) break;
-                                }
-                                else{
-                                    throw new CostManagerException("Please check name or date.");
-                                }
-                            }
-                        }
                         //Generate itemID, not really matter only name matter
                         int itemID = 1;
-                        for(int i = 0; i < vm.checkItemList().size(); i++) {
-                            if(itemName.equals(vm.checkItemList().get(i).getItemName()))
-                                itemID = vm.checkItemList().get(0).getItemID();
-                        }
                         //Get price
                         double sum = 0;
-                        for(int i = 0; i < vm.checkItemList().size(); i++) {
-                            if(itemName.equals(vm.checkItemList().get(i).getItemName()))
-                                sum = vm.checkItemList().get(0).getPrice();
-                        }
                         String chosenCurrency = "0";
                         //Get currency
                         Currency currency = null;
@@ -924,9 +865,7 @@ public class View implements IView {
                                 currency = Currency.USD;
 
                         }
-                        //Get category name
-                        String categoryName = cbItemsCate.getSelectedItem().toString();
-                        //Get category ID
+                        //Get category ID, doesn't matter
                         int cateID = 0;
                         CostItem item = new CostItem(itemID, cateID, itemName, currency, sum,purchaseDate);
                         vm.deleteCostItem(item);
@@ -946,17 +885,8 @@ public class View implements IView {
                         if (cateName == null || cateName.length() == 0) {
                             throw new CostManagerException("Category name cannot be empty");
                         }
-                        //Get category ID
+                        //CateID will be set later
                         int minCateID = 1;
-                        List<Category> newCateList = vm.checkCateList();
-                        for (int i = 1; i < newCateList.size() + 1; i++){
-                            if(newCateList.get(i-1).getCategoryID() != i) {
-                                minCateID = i;
-                                break;
-                            }
-                            if(i == newCateList.size())minCateID = i + 1;
-                        }
-
                         Category category = new Category(minCateID, cateName);
                         vm.addCategory(category);
                         emptyItemListCate();     //Remove all the categories in combobox of items
@@ -981,30 +911,6 @@ public class View implements IView {
                         if (cateName == null || cateName.length() == 0) {
                             throw new CostManagerException("Category name cannot be empty");
                         }
-                        //Make sure the name exsists in database
-                        for(int i = 0; i < vm.checkCateList().size(); i++) {
-                            if(cateName.equals(vm.checkCateList().get(i).getCategoryName())){
-                                cateID = vm.checkCateList().get(i).getCategoryID();
-                                break;
-                            }
-                            if(i == vm.checkCateList().size() - 1)
-                            {
-                                if(cateName.equals(vm.checkCateList().get(i).getCategoryName())) {
-                                    cateID = vm.checkCateList().get(i).getCategoryID();
-                                    break;
-                                }
-                                else{
-                                    throw new CostManagerException("Category doesn't exsists in system.");
-                                }
-                            }
-                        }
-                        //Get category ID, doesnt really matter here.
-                        for(int i = 0; i < vm.checkItemList().size();i++){ //delete all items with the deleted cateID
-                            if(vm.checkItemList().get(i).getCateID() == cateID){
-                                vm.deleteCostItem(vm.checkItemList().get(i));
-                                i--;
-                            }
-                        }
                         Category category = new Category(cateID, cateName);
                         vm.deleteCategory(category);
                         emptyItemListCate();     //Remove all the categories in combobox of items
@@ -1024,14 +930,7 @@ public class View implements IView {
                             + "." + cbYYYYFromReport.getSelectedItem().toString() ;
                     String purchaseDateTo = cbDDToReport.getSelectedItem().toString() + "." + cbMMToReport.getSelectedItem().toString()
                             + "." + cbYYYYToReport.getSelectedItem().toString() ;
-
-                    try {
-                        vm.handleReport(purchaseDateFrom,purchaseDateTo);
-                    } catch (CostManagerException exception) {
-                        exception.printStackTrace();
-                        showMessage(exception.getMessage());
-                    }
-
+                    vm.handleReport(purchaseDateFrom,purchaseDateTo);
                 }
 
             });
@@ -1049,6 +948,7 @@ public class View implements IView {
                     String purchaseDateTo = cbDDToPieChart.getSelectedItem().toString() + "." + cbMMToPieChart.getSelectedItem().toString()
                             + "." + cbYYYYToPieChart.getSelectedItem().toString() ;
                     result.clear(); //Empty the pie chart
+                    /*
                     try {
                         dateFrom = format.parse(purchaseDateFrom);
                         Date dateTo = format.parse(purchaseDateTo);
@@ -1058,8 +958,9 @@ public class View implements IView {
                                 filteredItems.add(vm.checkItemList().get(i));
                             }
                         }
-                    } catch (ParseException | CostManagerException parseException) {
-                        parseException.printStackTrace();
+                    } catch (ParseException | CostManagerException ex) {
+                        ex.printStackTrace();
+                        throw new CostManagerException("error with dates");
                     }
                     try {
                         int countItems[] = new int[vm.checkCateList().size() + 2];
@@ -1076,7 +977,10 @@ public class View implements IView {
                         dataset = result;
                     } catch (CostManagerException costManagerException) {
                         costManagerException.printStackTrace();
+                        throw new CostManagerException("error with dates");
                     }
+
+                     */
                     chart = ChartFactory.createPieChart3D(
                             "CostManager Pie Chart",                  // chart title
                             dataset,                // data
@@ -1137,16 +1041,16 @@ public class View implements IView {
         //This method will load the combobox categories in items tab
         public void getItemList() throws CostManagerException {
             vm.loadCategories();
-            cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
+            //cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
         }
 
         //This method will empty the combobox of categories in items tab
         public void emptyItemListCate() throws CostManagerException {
             vm.loadCategories();
-            for(int i = 0; i < vm.checkCateList().size() - 1; i++) {
-                cbItemsCate.removeItemAt(0);
-            }
-            cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
+            //for(int i = 0; i < vm.checkCateList().size() - 1; i++) {
+             //   cbItemsCate.removeItemAt(0);
+            //}
+           // cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
 
         }
 
