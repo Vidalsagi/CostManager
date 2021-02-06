@@ -35,13 +35,6 @@ public interface IViewModel {
     public void deleteCostItem(CostItem item);
 
     /**
-     * Edit an existing item and replace the cateID
-     * @param item
-     * @param newCateID
-     */
-    public void editCostItem(CostItem item, int newCateID);
-
-    /**
      * Load the items from database to screen
      */
     public void loadItems();
@@ -59,12 +52,6 @@ public interface IViewModel {
     public void deleteCategory(Category category);
 
     /**
-     * Edit an existing category
-     * @param category
-     */
-    public void editCategory(Category category);
-
-    /**
      * Load the categories from DB to screen
      */
     public void loadCategories();
@@ -73,16 +60,6 @@ public interface IViewModel {
      * Add data to the piechart
      */
     public void getDataSetPie();
-
-    /**
-     * Will Give a list of items to print on screen
-     */
-    public void checkItemList();
-
-    /**
-     * Will Give a list of Categories to print on screen
-     */
-    public void checkCateList();
 
     /**
      * Set dates on the report and bring back data from the DB

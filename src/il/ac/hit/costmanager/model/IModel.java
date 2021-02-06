@@ -25,14 +25,6 @@ public interface IModel {
     public void deleteCostItem(CostItem item) throws CostManagerException;
 
     /**
-     * This function will edit a cost item
-     * @param item
-     * @param newCateID
-     * @throws CostManagerException
-     */
-    public void editCostItem(CostItem item, int newCateID) throws CostManagerException;
-
-    /**
      * This function will add category to the list
      * @param category
      * @throws CostManagerException
@@ -45,13 +37,6 @@ public interface IModel {
      * @throws CostManagerException
      */
     public void deleteCategory(Category category) throws CostManagerException;
-
-    /**
-     * This function will edit a category
-     * @param category
-     * @throws CostManagerException
-     */
-    public void editCategory(Category category) throws CostManagerException;
 
     /**
      * This function is used to create Dataset for the pieChart

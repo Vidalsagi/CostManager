@@ -63,12 +63,6 @@ public class View implements IView {
         ui.showCategories(categories);
     }
 
-    //This func will display a msg when all items are loaded
-    @Override
-    public void showMessageItemsLoaded(String message) {
-        ui.showMessageItemsLoaded(message);
-    }
-
     public View() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -1076,22 +1070,6 @@ public class View implements IView {
             }
 
         }
-
-        //This method will show msg when all items are loaded in the items text area
-        public void showMessageItemsLoaded(String message) {
-            if (SwingUtilities.isEventDispatchThread()) {
-                textAreaItems.setText(message);
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        textAreaItems.setText(message);
-                    }
-
-                });
-            }
-        }
-
 
         //This method will show the items in the report text area
         public void showReportItems(List<CostItem> itemsReport) {

@@ -46,11 +46,5 @@ public interface IView {
      */
     public void showCategories(List<Category>  categories);
 
-    /**
-     * This func will display a msg when all items are loaded
-     * @param message
-     */
-    public void showMessageItemsLoaded(String message);
-
 }
 

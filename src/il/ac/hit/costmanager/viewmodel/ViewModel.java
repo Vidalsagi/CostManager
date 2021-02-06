@@ -76,24 +76,6 @@ public class ViewModel implements IViewModel {
 
     }
 
-    @Override
-    public void editCostItem(CostItem item, int newCateID) {
-        pool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    model.editCostItem(item, newCateID);
-                    //Get the list of items from the DB to view and print it
-                    List<CostItem> items = model.getAllItems();
-                    view.showItems(items);
-                } catch (CostManagerException e) {
-                    view.showMessage(e.getMessage());
-                }
-            }
-        });
-
-    }
-
     //Load the items from database to screen
     @Override
     public void loadItems() { //load items from database
@@ -144,6 +126,9 @@ public class ViewModel implements IViewModel {
                     //Get the list of categories from the DB to view and print it
                     List<Category> categories = model.getAllCategories();
                     view.showCategories(categories);
+                    //Update the list of costitems on screen as well
+                    List<CostItem> items = model.getAllItems();
+                    view.showItems(items);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -152,24 +137,6 @@ public class ViewModel implements IViewModel {
 
     }
 
-    //Edit a category
-    @Override
-    public void editCategory(Category category) {
-        pool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    model.editCategory(category);
-                    //Get the list of categories from the DB to view and print it
-                    List<Category> categories = model.getAllCategories();
-                    view.showCategories(categories);
-                } catch (CostManagerException e) {
-                    view.showMessage(e.getMessage());
-                }
-            }
-        });
-
-    }
 
     //Load the categories from DB to screen
     @Override
@@ -206,39 +173,6 @@ public class ViewModel implements IViewModel {
         });
     }
 
-    //Will Give a list of items to print on screen
-    @Override
-    public void checkItemList(){
-        pool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<CostItem> itemList = model.getAllItems();
-                    //need to send the list to view somehow
-
-                } catch (CostManagerException e) {
-                    view.showMessage(e.getMessage());
-                }
-            }
-        });
-    }
-
-    //Will Give a list of Categories to print on screen
-    @Override
-    public void checkCateList(){
-        pool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<Category> cateList = model.getAllCategories();
-                    //need to send the list to view somehow
-
-                } catch (CostManagerException e) {
-                    view.showMessage(e.getMessage());
-                }
-            }
-        });
-    }
 
     /**
      * Set dates on the report and bring back data from the DB

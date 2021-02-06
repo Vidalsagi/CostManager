@@ -97,34 +97,6 @@ public class DerbyDBModel implements IModel{
          */
     }
 
-    /**
-     * This function will edit a cost item
-     * @param item
-     * @param newCateID
-     * @throws CostManagerException
-     */
-    @Override
-    public void editCostItem(CostItem item, int newCateID) throws CostManagerException {
-        try
-        {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
-            String query = "update ItemDB set CateIDCol = ? where ItemNameCol = ?";
-            PreparedStatement preparedStmt = connection.prepareStatement(query);
-            preparedStmt.setInt   (1, newCateID);
-            preparedStmt.setString(2, item.getItemName());
-
-            // execute the java preparedstatement
-            preparedStmt.executeUpdate();
-            connection.close();
-        }
-        catch(SQLException sqlException) {
-            sqlException.printStackTrace();
-            throw new CostManagerException("Couldn't edit item.");
-        } finally{
-            //closeConnectionAndStatement(connection, statement);
-        }
-    }
 
     /**
      * This function will add category to the list
@@ -182,7 +154,7 @@ public class DerbyDBModel implements IModel{
             }
             //Delete all items with the same cateID from DB
             for(int i = 0; i < newItemList.size(); i++) {
-                if(category.getCategoryID() == newItemList.get(i).getCateID()) deleteCostItem(newItemList.get(i));
+                if(cateID == newItemList.get(i).getCateID()) deleteCostItem(newItemList.get(i));
             }
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
@@ -224,33 +196,6 @@ public class DerbyDBModel implements IModel{
          */
     }
 
-    /**
-     * This function will edit a category
-     * @param category
-     * @throws CostManagerException
-     */
-    @Override
-    public void editCategory(Category category) throws CostManagerException {
-        try
-        {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
-            String query = "update CateDB set CateIDCol = ? where CateNameCol = ?";
-            PreparedStatement preparedStmt = connection.prepareStatement(query);
-            preparedStmt.setInt   (1, category.getCategoryID());
-            preparedStmt.setString(2, category.getCategoryName());
-
-            // execute the java preparedstatement
-            preparedStmt.executeUpdate();
-            connection.close();
-        }
-        catch(SQLException sqlException) {
-            sqlException.printStackTrace();
-            throw new CostManagerException("Couldn't edit category.");
-        } finally{
-            //closeConnectionAndStatement(connection, statement);
-        }
-    }
 
     //|||||||||||||||||||||||||||||||| This function is used for loading items from database ||||||||||||||||||||||||||||||||
 /*
