@@ -24,9 +24,10 @@ class DerbyDBModelTest {
     @org.junit.jupiter.api.Test
     void addCostItem() throws CostManagerException {
         Currency currency = Currency.ILS;
+        String cateName = "Accessories";
         CostItem item = new CostItem(15 ,13 ,"Sponge" ,currency ,15 , "15.1.2020");
         DerbyDBModel ItemDao = new DerbyDBModel();
-        ItemDao.addCostItem(item);
+        ItemDao.addCostItem(item, cateName);
         System.out.println("Item was added succesfully");
     }
 

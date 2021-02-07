@@ -16,7 +16,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -44,7 +43,6 @@ public class View implements IView {
         //vm.getDataSetPie(dataset);
     }
 
-
     //This func will display msgs related to errors
     @Override
     public void showMessage(String text) {
@@ -55,6 +53,11 @@ public class View implements IView {
     @Override
     public void showItems(List<CostItem> items) {
         ui.showItems(items);
+    }
+
+    @Override
+    public void setItemsCateCB(List<Category> categories) {
+        ui.loadCateListToCB(categories);
     }
 
     //This func will display the categories in database
@@ -71,11 +74,8 @@ public class View implements IView {
                 View.this.ui.start();
                 View.this.vm.loadItems();
                 View.this.vm.loadCategories();
-                try {
-                    View.this.ui.getItemList();
-                } catch (CostManagerException e) {
-                    e.printStackTrace();
-                }
+                View.this.vm.setCbItems();
+
             }
         });
     }
@@ -663,7 +663,7 @@ public class View implements IView {
             comboCurrencyOptions.setBackground(Color.WHITE);
             comboCurrencyOptions.setBounds(936, 211, 137, 29);
 
-            //Add settings in items tabs to the combobox to choose categoryies
+            //Add settings in items tabs to the combobox to choose categories
             cbItemsCate.setForeground(new Color(0, 0, 0));
             cbItemsCate.setBounds(936, 97, 154, 39);
 
@@ -817,7 +817,9 @@ public class View implements IView {
                                 + "." + cbYYYYItems.getSelectedItem().toString() ;
                         CostItem item = new CostItem(itemID, cateID, itemName, currency,
                                 sum, purchaseDate);
-                        vm.addCostItem(item);
+                        //Get category name
+                        String categoryName = cbItemsCate.getSelectedItem().toString();
+                        vm.addCostItem(item, categoryName);
 
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered sum... " + ex.getMessage());
@@ -883,8 +885,7 @@ public class View implements IView {
                         int minCateID = 1;
                         Category category = new Category(minCateID, cateName);
                         vm.addCategory(category);
-                        emptyItemListCate();     //Remove all the categories in combobox of items
-                        getItemList();           //Update combobox in item tab of categories
+                        vm.setCbItems(); //set the categories in the cb of items panel
 
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered ID... " + ex.getMessage());
@@ -907,8 +908,7 @@ public class View implements IView {
                         }
                         Category category = new Category(cateID, cateName);
                         vm.deleteCategory(category);
-                        emptyItemListCate();     //Remove all the categories in combobox of items
-                        getItemList();           //Update combobox in item tab of categories
+                        vm.setCbItems(); //set the categories in the cb of items panel
 
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered ID... " + ex.getMessage());
@@ -1032,20 +1032,18 @@ public class View implements IView {
 
         }
 
-        //This method will load the combobox categories in items tab
-        public void getItemList() throws CostManagerException {
-            vm.loadCategories();
-            //cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
-        }
-
-        //This method will empty the combobox of categories in items tab
-        public void emptyItemListCate() throws CostManagerException {
-            vm.loadCategories();
-            //for(int i = 0; i < vm.checkCateList().size() - 1; i++) {
-             //   cbItemsCate.removeItemAt(0);
-            //}
-           // cbItemsCate.setModel(new DefaultComboBoxModel(vm.checkCateList().toArray()));
-
+        public void loadCateListToCB(List<Category> categories){
+            cbItemsCate.setModel(new DefaultComboBoxModel(categories.toArray()));
+            //This method will empty the combobox of categories in items tab
+                vm.loadCategories();
+                for(int i = 0; i < categories.size() - 1; i++) {
+                    cbItemsCate.removeItemAt(0);
+                }
+            String[] cate = new String[categories.size()]; //set an array of strings to send to the combobox
+            for(int i = 0; i < categories.size();i++){
+                    cate[i] = categories.get(i).getCategoryName();
+            }
+                cbItemsCate.setModel(new DefaultComboBoxModel(cate));
         }
 
         //This method will show all the available categories in db

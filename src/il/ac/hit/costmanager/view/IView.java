@@ -41,10 +41,16 @@ public interface IView {
     public void showItems(List<CostItem> items);
 
     /**
+     * Will set the combobox of categories in the items panel
+     * @param categories
+     */
+    public void setItemsCateCB(List<Category> categories);
+
+    /**
      * This func will display the categories in database
      * @param categories
      */
-    public void showCategories(List<Category>  categories);
+    public void showCategories(List<Category> categories);
 
 }
 

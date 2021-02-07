@@ -6,6 +6,7 @@ import il.ac.hit.costmanager.model.CostManagerException;
 import il.ac.hit.costmanager.view.IView;
 import il.ac.hit.costmanager.model.IModel;
 
+import javax.swing.*;
 import java.util.List;
 
 public interface IViewModel {
@@ -26,7 +27,7 @@ public interface IViewModel {
      * Add item from the view to the model
      * @param item
      */
-    public void addCostItem(CostItem item);
+    public void addCostItem(CostItem item, String cateName);
 
     /**
      * Delete an item
@@ -60,6 +61,8 @@ public interface IViewModel {
      * Add data to the piechart
      */
     public void getDataSetPie();
+
+    public void setCbItems();
 
     /**
      * Set dates on the report and bring back data from the DB

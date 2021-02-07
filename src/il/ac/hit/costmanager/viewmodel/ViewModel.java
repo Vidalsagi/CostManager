@@ -7,6 +7,7 @@ import il.ac.hit.costmanager.model.IModel;
 import il.ac.hit.costmanager.view.IView;
 import org.jfree.data.general.DefaultPieDataset;
 
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -36,13 +37,13 @@ public class ViewModel implements IViewModel {
 
     //Add item from the view to the model
     @Override
-    public void addCostItem(CostItem item) {
+    public void addCostItem(CostItem item, String cateName) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     //Add to the DB the new CostItem
-                    model.addCostItem(item);
+                    model.addCostItem(item, cateName);
                     view.showMessage("Cost item was added successfully");
                     //get the new list of items
                     List<CostItem> items = model.getAllItems();
@@ -106,6 +107,8 @@ public class ViewModel implements IViewModel {
                     //Category[] categories = model.getCategories();
                     List<Category> categories = model.getAllCategories();
                     view.showCategories(categories);
+                    //Update categories combobox in items panel
+                    view.setItemsCateCB(categories);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -129,6 +132,8 @@ public class ViewModel implements IViewModel {
                     //Update the list of costitems on screen as well
                     List<CostItem> items = model.getAllItems();
                     view.showItems(items);
+                    //Update categories combobox in items panel
+                    view.setItemsCateCB(categories);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -166,6 +171,22 @@ public class ViewModel implements IViewModel {
                     DefaultPieDataset dataset1 = model.createDataset();
                     view.showMessage("Data was added successfully to pie chart!");
                     view.getPieChartDataSet(dataset1);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setCbItems() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                List<Category> categories = null;
+                try {
+                    categories = model.getAllCategories();
+                    view.setItemsCateCB(categories);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }

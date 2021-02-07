@@ -58,7 +58,7 @@ public class CostItem {
 
     public void setItemID(int itemID) throws CostManagerException {
         //Make sure the itemID isn't zero
-        if(itemID == 0) throw(new CostManagerException("Item ID Cannot be zero!"));
+        if(itemID < 0) throw(new CostManagerException("Item ID cannot be negative!"));
         this.itemID = itemID;
     }
 
@@ -79,7 +79,7 @@ public class CostItem {
 
     public void setCateID(int cateID) throws CostManagerException {
         //Make sure the cateID isn't zero
-        if(cateID == 0) throw(new CostManagerException("Category ID Cannot be zero!"));
+        if(cateID < 0) throw(new CostManagerException("Category ID cannot be negative!"));
         this.cateID = cateID;
     }
 

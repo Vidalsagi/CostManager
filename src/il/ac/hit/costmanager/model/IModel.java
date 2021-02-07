@@ -15,7 +15,7 @@ public interface IModel {
      * @param item
      * @throws CostManagerException
      */
-    public void addCostItem(CostItem item) throws CostManagerException;
+    public void addCostItem(CostItem item, String cateName) throws CostManagerException;
 
     /**
      * This function will remove item from the list

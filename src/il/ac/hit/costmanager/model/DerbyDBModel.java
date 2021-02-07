@@ -24,20 +24,29 @@ public class DerbyDBModel implements IModel{
      * @throws CostManagerException
      */
     @Override
-    public void addCostItem(CostItem item) throws CostManagerException {
+    public void addCostItem(CostItem item, String cateName) throws CostManagerException {
         try
         {
             //Check if item exists already by name
             List<CostItem> newList = getAllItems();
+            List<Category> newCateList = getAllCategories();
             for(int i=0;i< newList.size();i++){
                 if(newList.get(i).getItemName().equals(item.getItemName()) && newList.get(i).getPurchaseDate().equals(item.getPurchaseDate()))
                     throw new CostManagerException("Item Name already exsists in the same date in system.");
+            }
+            //search for the categories in database to save the cateID
+            int cateID = 1;
+            for(int i = 0; i < newCateList.size();i++){
+                if(cateName.equals(newCateList.get(i).getCategoryName())){
+                    cateID = getAllCategories().get(i).getCategoryID();
+                    break;
+                }
             }
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
             statement.execute("insert into ItemDB(ITEMIDCOL,CATEIDCOL," +
                     "ITEMNAMECOL,CURRENCYCOL,PRICECOL,PurchaseDateCol) VALUES (" + generateItemID() + ","
-                    + generateCateID() + "," + "'" + item.getItemName() + "','" +
+                    + cateID + "," + "'" + item.getItemName() + "','" +
                     item.getEcurrency() + "'," + item.getPrice() + ",'" +
                     item.getPurchaseDate() + "')");
             //ResultSet rs = statement.executeQuery(
