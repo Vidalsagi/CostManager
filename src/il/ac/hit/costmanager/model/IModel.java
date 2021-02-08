@@ -2,6 +2,7 @@ package il.ac.hit.costmanager.model;
 
 import org.jfree.data.general.DefaultPieDataset;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public interface IModel {
      * @return DefaultPieDataset
      * @throws CostManagerException
      */
-    public DefaultPieDataset createDataset() throws CostManagerException;
+    public DefaultPieDataset createDataset(Date dateTo, Date dateFrom) throws CostManagerException;
 
     /**
      * This function is used to load the items from database and return the list
@@ -67,11 +68,6 @@ public interface IModel {
      * @throws CostManagerException
      */
     public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws CostManagerException;
-
-    //public void loadItems() throws CostManagerException;
-    //public void loadCategories() throws CostManagerException;
-    //public CostItem[] getCostItems() throws CostManagerException;
-    //public Category[] getCategories() throws CostManagerException;
 
 
 

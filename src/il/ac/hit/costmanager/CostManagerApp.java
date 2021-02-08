@@ -1,6 +1,5 @@
 package il.ac.hit.costmanager;
 
-
 import il.ac.hit.costmanager.model.IModel;
 import il.ac.hit.costmanager.model.DerbyDBModel;
 import il.ac.hit.costmanager.view.IView;
@@ -27,12 +26,10 @@ public class CostManagerApp {
                     IView view = new View();
                     IModel model = new DerbyDBModel();
                     IViewModel vm = new ViewModel();
-
                     //connecting the components with each other
                     view.setViewModel(vm);
                     vm.setModel(model);
                     vm.setView(view);
-
     }
 }
 

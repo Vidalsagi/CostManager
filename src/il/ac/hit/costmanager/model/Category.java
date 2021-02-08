@@ -5,9 +5,8 @@ import java.sql.PreparedStatement;
 
 public class Category {
 
-    public String categoryName;
-    public int categoryID;
-    private PreparedStatement insertNewCategory;
+    public String categoryName;          //The name of category
+    public int categoryID;               //The category ID
 
     /**
      * constructor

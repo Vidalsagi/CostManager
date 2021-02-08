@@ -1,6 +1,10 @@
 package il.ac.hit.costmanager.model;
 
+//import jdk.internal.misc.JavaNetHttpCookieAccess;
+//import org.jfree.chart.ChartFactory;
+//import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.data.general.DefaultPieDataset;
+//import org.jfree.util.Rotation;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -11,12 +15,9 @@ import java.util.Date;
 
 public class DerbyDBModel implements IModel{
 
-
     public static String driver = "org.apache.derby.jdbc.ClientDriver";
     public static String protocol = "jdbc:derby://localhost:1527/CostManager;create=true";
-    //private Connection connection;
-    //private Statement statement;
-    //private ResultSet rs;
+
 
     /**
      * This function will add item to the list
@@ -49,14 +50,10 @@ public class DerbyDBModel implements IModel{
                     + cateID + "," + "'" + item.getItemName() + "','" +
                     item.getEcurrency() + "'," + item.getPrice() + ",'" +
                     item.getPurchaseDate() + "')");
-            //ResultSet rs = statement.executeQuery(
-            //        "SELECT ItemIDCol,ITEMNAMECOL FROM ItemDB ORDER BY ItemIDCol");
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't add a new item.");
-        } finally{
-            //closeConnectionAndStatement(connection, statement);
         }
     }
 
@@ -92,20 +89,8 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't delete item.");
-        } finally{
-            //closeConnectionAndStatement(connection, statement);
         }
-        /*
-        for(int i = 0; i < items.size();i++){
-            if(item.getItemName().equals(items.get(i).getItemName())){
-                items.remove(i);
-                break;
-            }
-        }
-
-         */
     }
-
 
     /**
      * This function will add category to the list
@@ -176,102 +161,8 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't delete category.");
-        } finally{
-            //closeConnectionAndStatement(connection, statement);
-        }
-
-        //Remove the category also from list
-        /*
-        for(int i = 0; i < categories.size();i++){
-            if(category.getCategoryName().equals(categories.get(i).getCategoryName())){//find the category via name
-                categories.remove(i);
-                //Save the index of the deleted category
-                for(int j = i; j < categories.size(); j++){
-                    Category category1 = categories.get(i);
-                    for(int x = 0; x < items.size();x++){
-                        if(items.get(x).getCateID() == category1.getCategoryID()){
-                            editCostItem(items.get(x),j + 1);
-                            items.get(x).setCateID(j + 1);
-                        }
-                    }
-                    editCategory(category1);
-                    categories.get(j).setCategoryID(j + 1);
-                }
-                break;
-            }
-        }
-
-
-         */
-    }
-
-
-    //|||||||||||||||||||||||||||||||| This function is used for loading items from database ||||||||||||||||||||||||||||||||
-/*
-    @Override
-    public void loadItems()  {
-        List<CostItem> itemsNew = new LinkedList<CostItem>();
-        try
-        {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(
-                    "SELECT * FROM ItemDB ORDER BY ItemIDCol");
-            while(rs.next())
-            {
-                Currency currency = Currency.valueOf(rs.getString("CurrencyCol").toUpperCase());
-                CostItem costItem = new CostItem(rs.getInt("ItemIDCol"),
-                        rs.getInt("CateIDCol"), rs.getString("ITEMNAMECOL"),
-                        currency, rs.getInt("PriceCol"),
-                        rs.getString("PurchaseDateCol"));
-
-                System.out.println("ItemID="+rs.getInt("ItemIDCol")
-                        + "CateID= " + rs.getInt("CateIDCol") +
-                        " Name= "+rs.getString("ITEMNAMECOL")
-                        + "CategoryName = " + "cateName" +
-                        "Currency = " + rs.getString("CurrencyCol") +
-                        "Price= " + rs.getInt("PriceCol") +
-                        "Purchase Date: " + rs.getString("PurchaseDateCol"));
-                itemsNew.add(costItem);
-            }
-            items = itemsNew;
-        }
-        catch(Exception e) {
-            e.printStackTrace();
         }
     }
-
-
- */
-    //|||||||||||||||||||||||||||||||| This function is used for loading categories from database ||||||||||||||||||||||||||||||||
-/*
-    @Override
-    public void loadCategories() throws CostManagerException {
-        List<Category> newList = new LinkedList<>();
-        try
-        {
-            Connection connection = DriverManager.getConnection(protocol);
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(
-                    "SELECT * FROM CateDB ORDER BY CateIDCol");
-            while(rs.next())
-            {
-                Category category = new Category(rs.getInt("CateIDCol"),
-                        rs.getString("CateNameCol"));
-
-                System.out.println("CateID="+rs.getInt("CateIDCol")
-                        + "Category Name= " + rs.getString("CateNameCol"));
-                newList.add(category);
-            }
-            categories = newList;
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
- */
 
     /**
      * This function is used to create Dataset for the pieChart
@@ -279,43 +170,41 @@ public class DerbyDBModel implements IModel{
      * @throws CostManagerException
      */
     @Override
-    public DefaultPieDataset createDataset() throws CostManagerException {
+    public DefaultPieDataset createDataset(Date dateTo, Date dateFrom) throws CostManagerException {
         DefaultPieDataset result = new DefaultPieDataset();
-            /*
-            loadItems(); //make sure list is loaded
-            loadCategories(); //make sure categories list is loaded
-            //counting array
-            int count[] = new int[categories.size()];
-            for (int i = 0; i < categories.size(); ++i)
-                count[i] = 0;
-            for (int i = 0; i < items.size(); ++i)
-                ++count[items.get(i).getCateID()];
-            for (int i = 0; i < count.length; i++) {
-                result.setValue(categories.get(i).getCategoryName(), count[i]);
+        DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        //counting array to count all items by cateID and split to categories via numbers
+        int count[] = new int[getAllCategories().size()];
+        for (int i = 0; i < getAllCategories().size(); ++i) count[i] = 0;
+        for (int i = 0; i < getAllItems().size(); ++i) ++count[getAllItems().get(i).getCateID()];
+        for (int i = 0; i < count.length; i++) result.setValue(getAllCategories().get(i).getCategoryName(), count[i]);
+        //Set a list to filter dates according to the entered data
+        List<CostItem> filteredItems = new LinkedList<CostItem>();
+        for(int i=0;i<getAllItems().size();i++) {
+            Date currentItemDate = null;
+            try {
+                currentItemDate = format.parse(getAllItems().get(i).getPurchaseDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                throw new CostManagerException("Failed to load items to piechart");
             }
-             */
+            if (dateFrom.before(currentItemDate) && dateTo.after(currentItemDate) || dateFrom.equals(currentItemDate) || dateTo.equals(currentItemDate)) {
+                filteredItems.add(getAllItems().get(i));
+            }
+        }
+        int countItems[] = new int[getAllCategories().size() + 2];
+        List<Category> newCateList = getAllCategories();
+        //add values according to cateid in the couting array so later add it to the piechart
+        for(int i = 0; i < filteredItems.size();i++)
+        {
+            countItems[filteredItems.get(i).getCateID()]++;
+        }
+        //add the items according to order
+        for(int i = 0; i < newCateList.size(); i++){
+            result.setValue(newCateList.get(i).getCategoryName(),countItems[i + 1]);
+        }
         return result;
     }
-
-    //|||||||||||||||||||||||||||||||| This function is used to add costItems to the list ||||||||||||||||||||||||||||||||
-
-/*
-    @Override
-    public CostItem[] getCostItems() throws CostManagerException {
-        return items.toArray(new CostItem[0]);
-    }
-
-    //|||||||||||||||||||||||||||||||| This function is used to add categories to the list ||||||||||||||||||||||||||||||||
-
-
-    @Override
-    public Category[] getCategories() throws CostManagerException {
-        return categories.toArray(new Category[0]);
-    }
-
-
- */
-    //|||||||||||||||||||||||||||||||| This function is used to load the items from database and return the list ||||||||||||||||||||||||||||||||
 
     /**
      * This function is used to load the items from database and return the list
@@ -355,8 +244,6 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't load item list.");
-        } finally{
-            //closeConnectionAndStatement(connection, statement);
         }
         return newList;
     }
@@ -389,8 +276,6 @@ public class DerbyDBModel implements IModel{
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
             throw new CostManagerException("Couldn't load categories list.");
-        } finally{
-            //closeConnectionAndStatement(connection, statement);
         }
         return newList;
     }
@@ -404,7 +289,7 @@ public class DerbyDBModel implements IModel{
      */
     @Override
     public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws CostManagerException {
-        List<CostItem> filteredItems = getAllItems();
+        List<CostItem> filteredItems = new LinkedList<>();
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date dateFrom = null;
         try {
@@ -423,7 +308,11 @@ public class DerbyDBModel implements IModel{
         return filteredItems;
     }
 
-
+    /**
+     * Will generate itemID for an item
+     * @return
+     * @throws CostManagerException
+     */
     public int generateItemID() throws CostManagerException{
         //Define a new list called newList of CostItem
         List<CostItem> newList = getAllItems();
@@ -438,6 +327,11 @@ public class DerbyDBModel implements IModel{
         return itemID;
     }
 
+    /**
+     * Will generate cateID for a category
+     * @return
+     * @throws CostManagerException
+     */
     public int generateCateID() throws CostManagerException{
         int cateID = 1;
         List<Category> newList = getAllCategories();
@@ -449,27 +343,6 @@ public class DerbyDBModel implements IModel{
                 if (i == newList.size()) cateID = i + 1;
             }
         return cateID;
-    }
-
-    /**
-     * Makes sure connection and statement are close
-     * @param connection
-     * @param statement
-     * @throws CostManagerException
-     */
-    public void closeConnectionAndStatement(Connection connection, Statement statement) throws CostManagerException{
-        if(statement != null) try{
-            statement.close();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new CostManagerException("Error connection.");
-        }
-        if(connection != null) try{
-            connection.close();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new CostManagerException("Error statement.");
-        }
     }
 
 }

@@ -2,12 +2,11 @@ package il.ac.hit.costmanager.viewmodel;
 
 import il.ac.hit.costmanager.model.Category;
 import il.ac.hit.costmanager.model.CostItem;
-import il.ac.hit.costmanager.model.CostManagerException;
 import il.ac.hit.costmanager.view.IView;
 import il.ac.hit.costmanager.model.IModel;
 
-import javax.swing.*;
-import java.util.List;
+import java.util.Date;
+
 
 public interface IViewModel {
 
@@ -60,7 +59,7 @@ public interface IViewModel {
     /**
      * Add data to the piechart
      */
-    public void getDataSetPie();
+    public void getDataSetPie(Date dateTo, Date dateFrom);
 
     public void setCbItems();
 

@@ -16,9 +16,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 public class View implements IView {
@@ -40,7 +40,7 @@ public class View implements IView {
     //This func is related to piechart
     @Override
     public void getPieChartDataSet(DefaultPieDataset dataset) {
-        //vm.getDataSetPie(dataset);
+        ui.showPieChart(dataset);
     }
 
     //This func will display msgs related to errors
@@ -237,7 +237,6 @@ public class View implements IView {
 
             /* PanelItem related (Items) */
             //In items tab add table for adding data
-
             tableItems = new JTable();
             textAreaItems = new JTextArea();
             itemMenu = new JScrollPane(textAreaItems);
@@ -372,39 +371,25 @@ public class View implements IView {
             panelPieInfo.add(cbYYYYToPieChart);
             panelPieInfo.add(btnGeneratePieChart);
 
-            /**
-             * panelPieChart Properties
-             **/
-
-            result.setValue("Please Enter Dates", 1);
-            dataset = result;
-            chart = ChartFactory.createPieChart3D(
-                    "CostManager Pie Chart",                  // chart title
-                    dataset,                // data
-                    true,                   // include legend
-                    true,
-                    false
-            );
-            PiePlot3D plot = (PiePlot3D) chart.getPlot();
-            plot.setStartAngle(290);
-            plot.setDirection(Rotation.CLOCKWISE);
-            plot.setForegroundAlpha(0.5f);
+            /*
+              panelPieChart Properties
+             */
 
             chartPanel = new ChartPanel(chart);
             chartPanel.setPreferredSize(new java.awt.Dimension(735, 500));
-            chartPanel.setBackground(Color.BLACK);
+            chartPanel.setBackground(Color.GRAY);
 
             tabbedPane.addTab("Pie Chart", null, panelPieMain, null);
 
             panelPieMain.setBackground(Color.GRAY);
-            panelPieMain.add(chartPanel, BorderLayout.EAST);;
-            panelPieMain.add(panelPieInfo, BorderLayout.WEST);;
+            panelPieMain.add(chartPanel, BorderLayout.EAST);
+            panelPieMain.add(panelPieInfo, BorderLayout.CENTER);
 
             panelPieInfo.setPreferredSize(new java.awt.Dimension(450, 500));
             panelPieInfo.setBackground(Color.GRAY);
 
             pieChart = new PieChart("CostManager Pie Chart",
-                    "Pie chart from dates: 11/12/2020 - 22/12/2020");
+                    "Pie chart from dates: 01/01/2000 - 31/12/2021");
             pieChart.pack();
 
             //Change settings for the lbl "Set Dates" in pie chart
@@ -489,7 +474,6 @@ public class View implements IView {
             }
 
             //Set an icon for the Jframe
-            frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Sagi\\Desktop\\\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA 2\\CostManagerApp\\img\\CostMangerIcon.png"));
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setBounds(100, 100, 1140, 880);
 
@@ -514,9 +498,9 @@ public class View implements IView {
             tabbedPane.setFont(new Font("Cooper Black", Font.PLAIN, 16));
             panelCate.setLayout(null);
 
-            /**
-             * panelCategories
-             **/
+            /*
+             panelCategories
+             */
 
             //Set the table in Categories tab
             categoriesMenu.setBounds(0, 0, 709, 424);
@@ -553,9 +537,9 @@ public class View implements IView {
             btnDeleteCategory.setOpaque(false);
             btnDeleteCategory.setContentAreaFilled(false);
 
-            /**
-             * panelItems
-             **/
+            /*
+             panelItems
+             */
 
             //Define panel 2, Items
             panelItem.setBackground(Color.GRAY);
@@ -608,7 +592,6 @@ public class View implements IView {
             lblCategory.setFont(new Font("Cooper Black", Font.PLAIN, 20));
             lblCategory.setBackground(Color.WHITE);
             lblCategory.setBounds(744, 103, 125, 20);
-
 
             //In the items tab add settings to label Price
             lblPrice.setOpaque(true);
@@ -667,9 +650,9 @@ public class View implements IView {
             cbItemsCate.setForeground(new Color(0, 0, 0));
             cbItemsCate.setBounds(936, 97, 154, 39);
 
-            /**
-             * panelReport Properties
-             **/
+            /*
+             panelReport Properties
+             */
 
             //Add to the tabbed panel a "Report" tab and add settings
             tabbedPane.addTab("Report", null, panelReport, null);
@@ -735,9 +718,9 @@ public class View implements IView {
             spReport.setBounds(0, 0, 700, 351);
             spReport.setViewportView(textAreaReport);
 
-            /**
-             * TabbedPane position and layout
-             **/
+            /*
+             TabbedPane position and layout
+             */
 
             //Add settings to the tabbed panel
             tabbedPane.setBackgroundAt(0,Color.GRAY); //change tabs color to gray
@@ -755,7 +738,6 @@ public class View implements IView {
             frame.setUndecorated(true); //hide the upper bar of the application.
             frame.add(tabbedPane, BorderLayout.CENTER);
             frame.add(panelMessage, BorderLayout.SOUTH);
-
 
             //Handling window closing
             frame.addWindowListener(new WindowAdapter() {
@@ -784,7 +766,6 @@ public class View implements IView {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-
                         String itemName = tfItemName.getText();
                         if (itemName == null || itemName.length() == 0) {
                             throw new CostManagerException("Item name cannot be empty");
@@ -820,7 +801,6 @@ public class View implements IView {
                         //Get category name
                         String categoryName = cbItemsCate.getSelectedItem().toString();
                         vm.addCostItem(item, categoryName);
-
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered sum... " + ex.getMessage());
                     } catch (CostManagerException ex) {
@@ -871,6 +851,7 @@ public class View implements IView {
                     }
                 }
             });
+
             //Handling category adding button click on items tab
             btnAddCategory.addActionListener(new ActionListener() {
                 @Override
@@ -886,7 +867,6 @@ public class View implements IView {
                         Category category = new Category(minCateID, cateName);
                         vm.addCategory(category);
                         vm.setCbItems(); //set the categories in the cb of items panel
-
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered ID... " + ex.getMessage());
                     } catch (CostManagerException ex) {
@@ -894,6 +874,7 @@ public class View implements IView {
                     }
                 }
             });
+
             //Handling category delete button click on items tab
             btnDeleteCategory.addActionListener(new ActionListener() {
                 @Override
@@ -909,7 +890,6 @@ public class View implements IView {
                         Category category = new Category(cateID, cateName);
                         vm.deleteCategory(category);
                         vm.setCbItems(); //set the categories in the cb of items panel
-
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered ID... " + ex.getMessage());
                     } catch (CostManagerException ex) {
@@ -917,6 +897,7 @@ public class View implements IView {
                     }
                 }
             });
+
             // This will save the selected dates by user, and will save into a string format, and will send to show report
             btnGenerateReport.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -926,70 +907,30 @@ public class View implements IView {
                             + "." + cbYYYYToReport.getSelectedItem().toString() ;
                     vm.handleReport(purchaseDateFrom,purchaseDateTo);
                 }
-
             });
-            // This will save the selected dates by user, and will save into a string format, and will send to show pieChart
+
+            // This will save the selected dates by user, save into a string format, and will send to the viewmodel
             btnGeneratePieChart.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e){
                     //Set DateFormat
                     DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
                     Date dateFrom = null;
-                    //Set a list to filter dates according to the entered data
-                    List<CostItem> filteredItems = new LinkedList<CostItem>();
+                    Date dateTo = null;
                     //Get the From and To dates
                     String purchaseDateFrom = cbDDFromPieChart.getSelectedItem().toString() + "." + cbMMFromPieChart.getSelectedItem().toString()
                             + "." + cbYYYYFromPieChart.getSelectedItem().toString() ;
                     String purchaseDateTo = cbDDToPieChart.getSelectedItem().toString() + "." + cbMMToPieChart.getSelectedItem().toString()
                             + "." + cbYYYYToPieChart.getSelectedItem().toString() ;
                     result.clear(); //Empty the pie chart
-                    /*
-                    try {
+                    try { //need to replace somehow
                         dateFrom = format.parse(purchaseDateFrom);
-                        Date dateTo = format.parse(purchaseDateTo);
-                        for(int i=0;i<vm.checkItemList().size();i++){
-                            Date currentItemDate = format.parse(vm.checkItemList().get(i).getPurchaseDate());
-                            if(dateFrom.before(currentItemDate)&&dateTo.after(currentItemDate)||dateFrom.equals(currentItemDate)||dateTo.equals(currentItemDate)) {
-                                filteredItems.add(vm.checkItemList().get(i));
-                            }
-                        }
-                    } catch (ParseException | CostManagerException ex) {
-                        ex.printStackTrace();
-                        throw new CostManagerException("error with dates");
+                        dateTo = format.parse(purchaseDateTo);
+                    } catch (ParseException parseException) {
+                        parseException.printStackTrace();
                     }
-                    try {
-                        int countItems[] = new int[vm.checkCateList().size() + 2];
-                        List<Category> newCateList = vm.checkCateList();
-                        //add values according to cateid in the couting array so later add it to the piechart
-                        for(int i = 0; i < filteredItems.size();i++)
-                        {
-                            countItems[filteredItems.get(i).getCateID()]++;
-                        }
-                        //add the items according to order
-                        for(int i = 0; i < newCateList.size(); i++){
-                            result.setValue(newCateList.get(i).getCategoryName(),countItems[i + 1]);
-                        }
-                        dataset = result;
-                    } catch (CostManagerException costManagerException) {
-                        costManagerException.printStackTrace();
-                        throw new CostManagerException("error with dates");
-                    }
-
-                     */
-                    chart = ChartFactory.createPieChart3D(
-                            "CostManager Pie Chart",                  // chart title
-                            dataset,                // data
-                            true,                   // include legend
-                            true,
-                            false
-                    );
-                    PiePlot3D plot = (PiePlot3D) chart.getPlot();
-                    plot.setStartAngle(290);
-                    plot.setDirection(Rotation.CLOCKWISE);
-                    plot.setForegroundAlpha(0.5f);
+                    vm.getDataSetPie(dateTo, dateFrom);
                 }
-
             });
-
             //Displaying the window
             frame.setSize(1200, 600);
             frame.setVisible(true);
@@ -1017,7 +958,6 @@ public class View implements IView {
                 sb.append("\n");
             }
             String text = sb.toString();
-
             if (SwingUtilities.isEventDispatchThread()) {
                 textAreaItems.setText(text);
             } else {
@@ -1027,9 +967,29 @@ public class View implements IView {
                         textAreaItems.setText("Items Name: " +"\n" + text);
                     }
                 });
-
             }
+        }
 
+        //This method gets the dataset from the model and create the pie chart in the view
+        public void showPieChart(DefaultPieDataset DateSet){
+            result = DateSet;
+            dataset = result;
+            chart = ChartFactory.createPieChart3D(
+                    "CostManager Pie Chart",         // chart title
+                    dataset,                              // data
+                    true,                          // include legend
+                    true,
+                    false
+            );
+            PiePlot3D plot = (PiePlot3D) chart.getPlot();
+            plot.setForegroundAlpha(0.5f);
+            plot.setStartAngle(290);
+            plot.setDirection(Rotation.CLOCKWISE);
+            panelPieMain.remove(chartPanel);
+            panelPieMain.remove(panelPieInfo);
+            chartPanel = new ChartPanel(chart);
+            panelPieMain.add(panelPieInfo, BorderLayout.EAST);
+            panelPieMain.add(chartPanel, BorderLayout.WEST);
         }
 
         public void loadCateListToCB(List<Category> categories){
@@ -1054,7 +1014,6 @@ public class View implements IView {
                 sb.append("\n");
             }
             String text = sb.toString();
-
             if (SwingUtilities.isEventDispatchThread()) {
                 textAreaCate.setText("Category Name: " + text);
             } else {
@@ -1064,9 +1023,7 @@ public class View implements IView {
                         textAreaCate.setText("Categories Name: " +"\n" + text);
                     }
                 });
-
             }
-
         }
 
         //This method will show the items in the report text area
@@ -1077,9 +1034,7 @@ public class View implements IView {
                 sb.append("\n");
             }
             String text = sb.toString();
-
             if (SwingUtilities.isEventDispatchThread()) {
-
                 textAreaReport.setText(text);
             }
             else {
@@ -1089,7 +1044,6 @@ public class View implements IView {
                         textAreaReport.setText(text);
                     }
                 });
-
             }
         }
     }

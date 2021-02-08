@@ -7,8 +7,7 @@ import il.ac.hit.costmanager.model.IModel;
 import il.ac.hit.costmanager.view.IView;
 import org.jfree.data.general.DefaultPieDataset;
 
-import javax.swing.*;
-import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -139,9 +138,7 @@ public class ViewModel implements IViewModel {
                 }
             }
         });
-
     }
-
 
     //Load the categories from DB to screen
     @Override
@@ -163,12 +160,12 @@ public class ViewModel implements IViewModel {
 
     //Add data to the piechart
     @Override
-    public void getDataSetPie() {
+    public void getDataSetPie(Date dateTo, Date dateFrom) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    DefaultPieDataset dataset1 = model.createDataset();
+                    DefaultPieDataset dataset1 = model.createDataset(dateTo,dateFrom);
                     view.showMessage("Data was added successfully to pie chart!");
                     view.getPieChartDataSet(dataset1);
                 } catch (CostManagerException e) {
@@ -218,5 +215,3 @@ public class ViewModel implements IViewModel {
         });
     }
 }
-
-
