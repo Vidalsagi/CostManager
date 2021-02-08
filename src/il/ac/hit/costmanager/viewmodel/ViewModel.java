@@ -7,6 +7,7 @@ import il.ac.hit.costmanager.model.IModel;
 import il.ac.hit.costmanager.view.IView;
 import org.jfree.data.general.DefaultPieDataset;
 
+import javax.swing.*;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -44,10 +45,9 @@ public class ViewModel implements IViewModel {
                     //Add to the DB the new CostItem
                     model.addCostItem(item, cateName);
                     view.showMessage("Cost item was added successfully");
-                    //get the new list of items
-                    List<CostItem> items = model.getAllItems();
-                    //show the new updated list
-                    view.showItems(items);
+                    //Update the list of costitems on screen as well
+                    JTable itemsTable = model.updatePanelCateItem(1);
+                    view.showItemsTable(itemsTable);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -66,8 +66,9 @@ public class ViewModel implements IViewModel {
                     model.deleteCostItem(item);
                     view.showMessage("Cost item was deleted successfully");
                     //send a list from the model to the view for a new print on screen
-                    List<CostItem> items = model.getAllItems();
-                    view.showItems(items);
+                    //Update the list of costitems on screen as well
+                    JTable itemsTable = model.updatePanelCateItem(1);
+                    view.showItemsTable(itemsTable);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -75,24 +76,6 @@ public class ViewModel implements IViewModel {
         });
 
     }
-
-    //Load the items from database to screen
-    @Override
-    public void loadItems() { //load items from database
-        pool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<CostItem> items = model.getAllItems();
-                    view.showItems(items);
-                    view.showMessage("Cost items were loaded from model.");
-                } catch (CostManagerException e) {
-                    view.showMessage(e.getMessage());
-                }
-            }
-        });
-    }
-
 
     //Add a category
     @Override
@@ -104,9 +87,10 @@ public class ViewModel implements IViewModel {
                     model.addCategory(category);
                     view.showMessage("Category was added successfully");
                     //Category[] categories = model.getCategories();
-                    List<Category> categories = model.getAllCategories();
-                    view.showCategories(categories);
+                    JTable cateTable =  cateTable = model.updatePanelCateItem(2);
+                    view.showCategoriesTable(cateTable);
                     //Update categories combobox in items panel
+                    List<Category> categories = model.getAllCategories();
                     view.setItemsCateCB(categories);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
@@ -126,12 +110,13 @@ public class ViewModel implements IViewModel {
                     model.deleteCategory(category);
                     view.showMessage("Category was deleted successfully");
                     //Get the list of categories from the DB to view and print it
-                    List<Category> categories = model.getAllCategories();
-                    view.showCategories(categories);
+                    JTable cateTable =  cateTable = model.updatePanelCateItem(2);
+                    view.showCategoriesTable(cateTable);
                     //Update the list of costitems on screen as well
-                    List<CostItem> items = model.getAllItems();
-                    view.showItems(items);
+                    JTable itemsTable = model.updatePanelCateItem(1);
+                    view.showItemsTable(itemsTable);
                     //Update categories combobox in items panel
+                    List<Category> categories = model.getAllCategories();
                     view.setItemsCateCB(categories);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
@@ -142,15 +127,33 @@ public class ViewModel implements IViewModel {
 
     //Load the categories from DB to screen
     @Override
-    public void loadCategories() {
+    public void loadCategoriesTable() {
         pool.submit(new Runnable() {
             @Override
             public void run() {
-                List<Category> categories = null;
+                JTable cateTable = null;
                 try {
-                    categories = model.getAllCategories();
-                    view.showCategories(categories);
-                    view.showMessage("Categories were loaded from model.");
+                    cateTable = model.updatePanelCateItem(2);
+                    view.showCategoriesTable(cateTable);
+                    view.showMessage("Categories table were loaded from the DB.");
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    //Load the categories from DB to screen
+    @Override
+    public void loadItemTable() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                JTable itemsTable = null;
+                try {
+                    itemsTable = model.updatePanelCateItem(1);
+                    view.showItemsTable(itemsTable);
+                    view.showMessage("Items table were loaded from the DB.");
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -198,15 +201,16 @@ public class ViewModel implements IViewModel {
      * @param DateTo is String of the date from
      */
     @Override
-    public void handleReport(String DateFrom, String DateTo) {
+    public void handleReport(Date dateFrom, Date dateTo) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     //Define a list of items, take it from the model and add the strings DateFrom DateTo
-                    List<CostItem> itemsReport = model.handleReport(DateFrom,DateTo);
+                    List<CostItem> itemsReport = model.handleReport(dateFrom,dateTo);
                     //Display the report in the panel
-                    view.showReportItems(itemsReport);
+                    JTable itemsTable = model.updatePanelReport(itemsReport);
+                    view.showReportItems(itemsTable);
                     view.showMessage("Displaying the report.");
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());

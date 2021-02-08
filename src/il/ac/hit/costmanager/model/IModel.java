@@ -2,6 +2,7 @@ package il.ac.hit.costmanager.model;
 
 import org.jfree.data.general.DefaultPieDataset;
 
+import javax.swing.*;
 import java.util.Date;
 import java.util.List;
 
@@ -67,8 +68,21 @@ public interface IModel {
      * @return List<CostItem></CostItem>
      * @throws CostManagerException
      */
-    public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws CostManagerException;
+    public List<CostItem> handleReport(Date sDateFrom, Date sDateTo) throws CostManagerException;
 
+    /**
+     * This method will give a table variable for the items or categories list
+     * @param queryNum
+     * @return
+     * @throws CostManagerException
+     */
+    public JTable updatePanelCateItem(int queryNum) throws CostManagerException;
 
-
+    /**
+     * This method will give a table variable for the report list
+     * @param listReport
+     * @return
+     * @throws CostManagerException
+     */
+    public JTable updatePanelReport(List<CostItem> listReport) throws CostManagerException;
 }

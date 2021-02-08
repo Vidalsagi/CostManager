@@ -5,6 +5,7 @@ import il.ac.hit.costmanager.model.CostItem;
 import il.ac.hit.costmanager.viewmodel.IViewModel;
 import org.jfree.data.general.DefaultPieDataset;
 
+import javax.swing.*;
 import java.util.List;
 
 public interface IView {
@@ -17,9 +18,9 @@ public interface IView {
 
     /**
      * This will show the report of items in selected datesv
-     * @param itemsReport
+     * @param itemsReportTable
      */
-    public void showReportItems(List<CostItem> itemsReport);
+    public void showReportItems(JTable itemsReportTable);
 
     /**
      * This func is related to piechart
@@ -34,16 +35,16 @@ public interface IView {
     public void showMessage(String text);
 
     /**
-     * This func will display the items in database
-     * @param items
+     * This func will display the items in table at the items tab
+     * @param itemTable
      */
-    public void showItems(List<CostItem> items);
+    public void showItemsTable(JTable itemTable);
 
     /**
      * This func will display the categories in database
-     * @param categories
+     * @param cateTable
      */
-    public void showCategories(List<Category> categories);
+    public void showCategoriesTable(JTable cateTable);
 
     /**
      * Will set the combobox of categories in the items panel

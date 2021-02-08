@@ -16,7 +16,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +33,7 @@ public class View implements IView {
 
     //This will show the report of items in selected dates
     @Override
-    public void showReportItems (List<CostItem> itemsReport){ui.showReportItems(itemsReport); };
+    public void showReportItems (JTable itemsReportTable){ui.showReportItems(itemsReportTable); };
 
 
     //This func is related to piechart
@@ -49,10 +48,9 @@ public class View implements IView {
         ui.showMessage(text);
     }
 
-    //This func will display the items in database
     @Override
-    public void showItems(List<CostItem> items) {
-        ui.showItems(items);
+    public void showItemsTable(JTable itemsTable) {
+        ui.showItemsTable(itemsTable);
     }
 
     @Override
@@ -62,8 +60,8 @@ public class View implements IView {
 
     //This func will display the categories in database
     @Override
-    public void showCategories(List<Category>  categories) {
-        ui.showCategories(categories);
+    public void showCategoriesTable(JTable cateTable) {
+        ui.showCategoriesTable(cateTable);
     }
 
     public View() {
@@ -72,10 +70,9 @@ public class View implements IView {
             public void run() {
                 View.this.ui = new ApplicationUI();
                 View.this.ui.start();
-                View.this.vm.loadItems();
-                View.this.vm.loadCategories();
+                View.this.vm.loadItemTable();
+                View.this.vm.loadCategoriesTable();
                 View.this.vm.setCbItems();
-
             }
         });
     }
@@ -105,11 +102,8 @@ public class View implements IView {
 
         private JScrollPane categoriesMenu;
         private JTable tableCategories;
-        private JTextArea textAreaCate;
         private JTextField tfCategory;
         private JLabel lblCategoryName;
-        private JLabel imgCateBackground1;
-        private JLabel imgCateBackground2;
         private JButton btnAddCategory;
         private JButton btnDeleteCategory;
 
@@ -117,8 +111,6 @@ public class View implements IView {
           panel Report
          */
 
-        private JTable tableReport;
-        private JTextArea textAreaReport;
         private JButton btnGenerateReport;
         private JLabel lblSetDatesReport;
         private JScrollPane spReport;
@@ -142,8 +134,6 @@ public class View implements IView {
           panel Items
          */
 
-        private JTable tableItems;
-        private JTextArea textAreaItems;
         private JScrollPane itemMenu;
         private JLabel lblItemName;
         private JLabel lblCategory;
@@ -187,6 +177,7 @@ public class View implements IView {
         /*
         Application UI Method
          */
+
         public ApplicationUI() {
             //creating the window
             frame = new JFrame("CostManager");
@@ -216,8 +207,7 @@ public class View implements IView {
 
             //Set the table in categories tab
             tableCategories = new JTable();
-            textAreaCate = new JTextArea();
-            categoriesMenu = new JScrollPane(textAreaCate);
+            categoriesMenu = new JScrollPane(tableCategories);
             //tableCate = new JTable();
 
             //In Categories set the label "Category"
@@ -230,18 +220,12 @@ public class View implements IView {
             //In categories tab this is the remove buttom
             btnDeleteCategory = new JButton("Remove");
 
-            //In the categories tab add a background
-            imgCateBackground1 = new JLabel("");
-            //In the categories tab add a background2
-            imgCateBackground2 = new JLabel("");
 
             /* PanelItem related (Items) */
             //In items tab add table for adding data
-            tableItems = new JTable();
-            textAreaItems = new JTextArea();
-            itemMenu = new JScrollPane(textAreaItems);
 
             //In the items tab add field to add the DD to purchase date
+            itemMenu = new JScrollPane();
             cbDDItems = new JComboBox();
             //In the items tab add field to add the MM to purchase date
             cbMMItems = new JComboBox();
@@ -279,8 +263,6 @@ public class View implements IView {
             cateItemsMenuCombo = new JComboBox();
 
             /* PanelCate related (Report) */
-            tableReport = new JTable();
-            textAreaReport = new JTextArea();
             lblSetDatesReport = new JLabel("Set dates range to print the report");
             spReport = new JScrollPane();
             lblFromReport = new JLabel("From:");
@@ -346,7 +328,6 @@ public class View implements IView {
             panelItem.add(cateItemsMenuCombo);
 
             //Panel Report
-            panelReport.add(textAreaReport);
             panelReport.add(lblSetDatesReport);
             panelReport.add(spReport);
             panelReport.add(lblFromReport);
@@ -504,10 +485,6 @@ public class View implements IView {
 
             //Set the table in Categories tab
             categoriesMenu.setBounds(0, 0, 709, 424);
-            textAreaCate.setEditable(false);
-            textAreaCate.setBackground(Color.lightGray);
-            textAreaCate.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-            categoriesMenu.setViewportView(textAreaCate);
 
             //In categories set the label "Category"
             lblCategoryName.setOpaque(true);
@@ -568,13 +545,6 @@ public class View implements IView {
             btnRemoveItems.setForeground(new Color(0, 0, 0));
             btnRemoveItems.setBounds(933, 343, 157, 29);
             btnRemoveItems.setBorderPainted(false);
-
-            //In items tab add  settings to textarea for adding data
-            itemMenu.setBounds(0, 0, 709, 424);
-            textAreaItems.setEditable(false);
-            textAreaItems.setBackground(Color.lightGray);
-            textAreaItems.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-            itemMenu.setViewportView(textAreaItems);
 
             //in items tab add settings to the buttom "add"
             btnAddItems.setFont(new Font("Cooper Black", Font.PLAIN, 30));
@@ -711,13 +681,6 @@ public class View implements IView {
             cbYYYYToReport.setSelectedIndex(0);
             cbYYYYToReport.setBounds(1093, 318, 76, 33);
 
-            //In report tab add text area and scroll panel for adding data
-            textAreaReport.setEditable(false);
-            textAreaReport.setBackground(Color.lightGray);
-            textAreaReport.setFont(new Font("Cooper Black", Font.PLAIN, 12));
-            spReport.setBounds(0, 0, 700, 351);
-            spReport.setViewportView(textAreaReport);
-
             /*
              TabbedPane position and layout
              */
@@ -843,7 +806,9 @@ public class View implements IView {
                         }
                         //Get category ID, doesn't matter
                         int cateID = 0;
+                        //Define the object
                         CostItem item = new CostItem(itemID, cateID, itemName, currency, sum,purchaseDate);
+                        //Send the object to the view model
                         vm.deleteCostItem(item);
 
                     } catch (CostManagerException ex) {
@@ -859,14 +824,18 @@ public class View implements IView {
                     try {
                         //Get category name
                         String cateName = tfCategory.getText();
+                        //Validation Check
                         if (cateName == null || cateName.length() == 0) {
                             throw new CostManagerException("Category name cannot be empty");
                         }
                         //CateID will be set later
                         int minCateID = 1;
+                        //Create the object
                         Category category = new Category(minCateID, cateName);
+                        //Send the object to the view model
                         vm.addCategory(category);
-                        vm.setCbItems(); //set the categories in the cb of items panel
+                        //Update the categories in the combobox of items panel
+                        vm.setCbItems();
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered ID... " + ex.getMessage());
                     } catch (CostManagerException ex) {
@@ -884,12 +853,16 @@ public class View implements IView {
                         int cateID = 0;
                         //Get category name
                         String cateName = tfCategory.getText();
+                        //Validation check
                         if (cateName == null || cateName.length() == 0) {
                             throw new CostManagerException("Category name cannot be empty");
                         }
+                        //Create the object
                         Category category = new Category(cateID, cateName);
+                        //Send it to the view model for delete
                         vm.deleteCategory(category);
-                        vm.setCbItems(); //set the categories in the cb of items panel
+                        //Upadte the categories in the combobox of items panel
+                        vm.setCbItems();
                     } catch (NumberFormatException ex) {
                         View.this.showMessage("problem with entered ID... " + ex.getMessage());
                     } catch (CostManagerException ex) {
@@ -901,33 +874,39 @@ public class View implements IView {
             // This will save the selected dates by user, and will save into a string format, and will send to show report
             btnGenerateReport.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String purchaseDateFrom = cbDDFromReport.getSelectedItem().toString() + "." + cbMMFromReport.getSelectedItem().toString()
-                            + "." + cbYYYYFromReport.getSelectedItem().toString() ;
-                    String purchaseDateTo = cbDDToReport.getSelectedItem().toString() + "." + cbMMToReport.getSelectedItem().toString()
-                            + "." + cbYYYYToReport.getSelectedItem().toString() ;
-                    vm.handleReport(purchaseDateFrom,purchaseDateTo);
+                    //Set DateFormat
+                    DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+                    //Get the From and To dates
+                    int ddFrom = Integer.valueOf((cbDDFromReport.getSelectedItem().toString()));
+                    int mmFrom = Integer.valueOf((cbMMFromReport.getSelectedItem().toString())) - 1;
+                    int yyyyFrom =  Integer.valueOf((cbYYYYFromReport.getSelectedItem().toString())) - 1900;
+                    Date dateFrom = new Date(yyyyFrom,mmFrom,ddFrom);
+                    int ddTo = Integer.valueOf((cbDDToReport.getSelectedItem().toString()));
+                    int mmTo = Integer.valueOf((cbMMToReport.getSelectedItem().toString())) - 1;
+                    int yyyyTo =  Integer.valueOf((cbYYYYToReport.getSelectedItem().toString())) - 1900;
+                    Date dateTo = new Date(yyyyTo,mmTo,ddTo);
+                    //Send the dates to the view model
+                    vm.handleReport(dateFrom,dateTo);
                 }
             });
 
-            // This will save the selected dates by user, save into a string format, and will send to the viewmodel
+            //This will save the selected dates by user, save into a string format, and will send to the viewmodel
             btnGeneratePieChart.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e){
                     //Set DateFormat
                     DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-                    Date dateFrom = null;
-                    Date dateTo = null;
                     //Get the From and To dates
-                    String purchaseDateFrom = cbDDFromPieChart.getSelectedItem().toString() + "." + cbMMFromPieChart.getSelectedItem().toString()
-                            + "." + cbYYYYFromPieChart.getSelectedItem().toString() ;
-                    String purchaseDateTo = cbDDToPieChart.getSelectedItem().toString() + "." + cbMMToPieChart.getSelectedItem().toString()
-                            + "." + cbYYYYToPieChart.getSelectedItem().toString() ;
-                    result.clear(); //Empty the pie chart
-                    try { //need to replace somehow
-                        dateFrom = format.parse(purchaseDateFrom);
-                        dateTo = format.parse(purchaseDateTo);
-                    } catch (ParseException parseException) {
-                        parseException.printStackTrace();
-                    }
+                    int ddFrom = Integer.valueOf((cbDDFromPieChart.getSelectedItem().toString()));
+                    int mmFrom = Integer.valueOf((cbMMFromPieChart.getSelectedItem().toString())) - 1;
+                    int yyyyFrom =  Integer.valueOf((cbYYYYFromPieChart.getSelectedItem().toString())) - 1900;
+                    Date dateFrom = new Date(yyyyFrom,mmFrom,ddFrom);
+                    int ddTo = Integer.valueOf((cbDDToPieChart.getSelectedItem().toString()));
+                    int mmTo = Integer.valueOf((cbMMToPieChart.getSelectedItem().toString())) - 1;
+                    int yyyyTo =  Integer.valueOf((cbYYYYToPieChart.getSelectedItem().toString())) - 1900;
+                    Date dateTo = new Date(yyyyTo,mmTo,ddTo);
+                    //Empty the pie chart
+                    result.clear();
+                    //Send the dates to the view model
                     vm.getDataSetPie(dateTo, dateFrom);
                 }
             });
@@ -950,30 +929,11 @@ public class View implements IView {
             }
         }
 
-        //This method will show all the avilable cost items in db
-        public void showItems(List<CostItem> items){
-            StringBuilder sb = new StringBuilder();
-            for (CostItem item : items) {
-                sb.append(item.toString());
-                sb.append("\n");
-            }
-            String text = sb.toString();
-            if (SwingUtilities.isEventDispatchThread()) {
-                textAreaItems.setText(text);
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        textAreaItems.setText("Items Name: " +"\n" + text);
-                    }
-                });
-            }
-        }
-
         //This method gets the dataset from the model and create the pie chart in the view
         public void showPieChart(DefaultPieDataset DateSet){
             result = DateSet;
             dataset = result;
+            //Set the variable chart
             chart = ChartFactory.createPieChart3D(
                     "CostManager Pie Chart",         // chart title
                     dataset,                              // data
@@ -981,21 +941,22 @@ public class View implements IView {
                     true,
                     false
             );
+            //Initialize the variable plot according to chart
             PiePlot3D plot = (PiePlot3D) chart.getPlot();
             plot.setForegroundAlpha(0.5f);
             plot.setStartAngle(290);
             plot.setDirection(Rotation.CLOCKWISE);
+            //Remove the previous Pie Chart panel
             panelPieMain.remove(chartPanel);
-            panelPieMain.remove(panelPieInfo);
+            //Set the new panel according to the new data
             chartPanel = new ChartPanel(chart);
-            panelPieMain.add(panelPieInfo, BorderLayout.EAST);
             panelPieMain.add(chartPanel, BorderLayout.WEST);
         }
 
         public void loadCateListToCB(List<Category> categories){
             cbItemsCate.setModel(new DefaultComboBoxModel(categories.toArray()));
             //This method will empty the combobox of categories in items tab
-                vm.loadCategories();
+                vm.loadCategoriesTable();
                 for(int i = 0; i < categories.size() - 1; i++) {
                     cbItemsCate.removeItemAt(0);
                 }
@@ -1007,44 +968,64 @@ public class View implements IView {
         }
 
         //This method will show all the available categories in db
-        public void showCategories(List<Category> categories) {
-            StringBuilder sb = new StringBuilder();
-            for (Category category : categories) {
-                sb.append(category.toString());
-                sb.append("\n");
-            }
-            String text = sb.toString();
-            if (SwingUtilities.isEventDispatchThread()) {
-                textAreaCate.setText("Category Name: " + text);
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        textAreaCate.setText("Categories Name: " +"\n" + text);
-                    }
-                });
-            }
+        public void showCategoriesTable(JTable cateTable) {
+            //Remove the previous scroll panel
+            panelCate.remove(categoriesMenu);
+            JTable table = cateTable;
+            table.setBounds(0,0,709,424);
+            table.setEnabled(false);
+            table.setBackground(Color.GRAY);
+            //prevent the user from dragging the columns of the table
+            table.getTableHeader().setReorderingAllowed(false);
+            categoriesMenu = new JScrollPane(table);
+            categoriesMenu.setBounds(0, 0, 709, 424);
+            panelCate.setBackground(Color.GRAY);
+            categoriesMenu.setVisible(true);
+            //In cate panel add the scroll panel
+            panelCate.add(categoriesMenu);
+            panelCate.setBounds(0,0,709,424);
+            panelCate.setVisible(true);
         }
 
         //This method will show the items in the report text area
-        public void showReportItems(List<CostItem> itemsReport) {
-            StringBuilder sb = new StringBuilder();
-            for (CostItem item : itemsReport) {
-                sb.append(item.toString());
-                sb.append("\n");
-            }
-            String text = sb.toString();
-            if (SwingUtilities.isEventDispatchThread()) {
-                textAreaReport.setText(text);
-            }
-            else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        textAreaReport.setText(text);
-                    }
-                });
-            }
+        public void showReportItems(JTable itemsReport) {
+            //Remove the previous scroll panel
+            panelReport.remove(spReport);
+            JTable table = itemsReport;
+            table.setBounds(0,0,709,424);
+            table.setEnabled(false);
+            table.setBackground(Color.GRAY);
+            //Prevent the user from dragging the columns of the table
+            table.getTableHeader().setReorderingAllowed(false);
+            //Define a new scrollpanel and add it the table
+            spReport = new JScrollPane(table);
+            spReport.setBounds(0, 0, 700, 351);
+            panelReport.setBackground(Color.GRAY);
+            spReport.setVisible(true);
+            //In report panel add the scroll panel
+            panelReport.add(spReport);
+            panelReport.setBounds(0,0,709,424);
+            panelReport.setVisible(true);
+        }
+
+        public void showItemsTable(JTable itemsTable) {
+            //Remove the previous scroll panel
+            panelItem.remove(itemMenu);
+            JTable table = itemsTable;
+            table.setBounds(0,0,709,424);
+            table.setEnabled(false);
+            table.setBackground(Color.GRAY);
+            //Prevent the user from dragging the columns of the table
+            table.getTableHeader().setReorderingAllowed(false);
+            //Define a new scrollpanel and add it the table
+            itemMenu = new JScrollPane(table);
+            itemMenu.setBounds(0, 0, 709, 424);
+            panelItem.setBackground(Color.GRAY);
+            itemMenu.setVisible(true);
+            //In items panel add the scroll panel
+            panelItem.add(itemMenu);
+            panelItem.setBounds(0,0,709,424);
+            panelItem.setVisible(true);
         }
     }
 }

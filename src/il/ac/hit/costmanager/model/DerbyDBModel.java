@@ -1,11 +1,7 @@
 package il.ac.hit.costmanager.model;
 
-//import jdk.internal.misc.JavaNetHttpCookieAccess;
-//import org.jfree.chart.ChartFactory;
-//import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.data.general.DefaultPieDataset;
-//import org.jfree.util.Rotation;
-
+import javax.swing.*;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -186,7 +182,7 @@ public class DerbyDBModel implements IModel{
                 currentItemDate = format.parse(getAllItems().get(i).getPurchaseDate());
             } catch (ParseException e) {
                 e.printStackTrace();
-                throw new CostManagerException("Failed to load items to piechart");
+                throw new CostManagerException("Bad dates have been set");
             }
             if (dateFrom.before(currentItemDate) && dateTo.after(currentItemDate) || dateFrom.equals(currentItemDate) || dateTo.equals(currentItemDate)) {
                 filteredItems.add(getAllItems().get(i));
@@ -288,24 +284,69 @@ public class DerbyDBModel implements IModel{
      * @throws CostManagerException
      */
     @Override
-    public List<CostItem> handleReport(String sDateFrom, String sDateTo) throws CostManagerException {
+    public List<CostItem> handleReport(Date sDateFrom, Date sDateTo) throws CostManagerException {
         List<CostItem> filteredItems = new LinkedList<>();
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        Date dateFrom = null;
-        try {
-            dateFrom = format.parse(sDateFrom);
-            Date dateTo = format.parse(sDateTo);
-            for (int i = 0; i < getAllItems().size(); i++) {
+        for (int i = 0; i < getAllItems().size(); i++) {
+            try {
                 Date currentItemDate = format.parse(getAllItems().get(i).getPurchaseDate());
-                if (dateFrom.before(currentItemDate) && dateTo.after(currentItemDate) || dateFrom.equals(currentItemDate) || dateTo.equals(currentItemDate)) {
+                if (sDateFrom.before(currentItemDate) && sDateTo.after(currentItemDate) || sDateFrom.equals(currentItemDate) || sDateTo.equals(currentItemDate))
                     filteredItems.add(getAllItems().get(i));
                 }
+                catch(ParseException e){
+                    e.printStackTrace();
+                    throw new CostManagerException("Bad dates have been set");
+                }
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw new CostManagerException("Couldn't create the report."); //NEED TO ASK LIFEMICHAEL
-        }
         return filteredItems;
+    }
+
+    @Override
+    public JTable updatePanelCateItem(int queryNum) throws CostManagerException {
+        List<CostItem> itemList = getAllItems();
+        String columnItems[]={"ItemID","CateID", "Item Name","Price", "Currency", "Purchase Date"};
+        String columnCategories[]={"ID","Category Name"};
+        JTable table = null;
+        String data[][] = null;
+        if(queryNum == 1){
+            data = new String[itemList.size()][itemList.size()];
+            for(int i = 0; i < itemList.size(); i++){
+                data[i][0] = String.valueOf((getAllItems().get(i).getItemID()));
+                data[i][1] = String.valueOf((getAllItems().get(i).getCateID()));
+                data[i][2] = (getAllItems().get(i).getItemName());
+                data[i][3] = String.valueOf((getAllItems().get(i).getPrice()));
+                data[i][4] = String.valueOf((getAllItems().get(i).getEcurrency()));
+                data[i][5] = (getAllItems().get(i).getPurchaseDate());
+
+            }
+            table = new JTable(data,columnItems);
+        }
+        else if(queryNum == 2){
+            data = new String[getAllCategories().size()][getAllCategories().size()];
+            for(int i = 0; i < getAllCategories().size(); i++){
+                data[i][0] = String.valueOf((getAllCategories().get(i).getCategoryID()));
+                data[i][1] = getAllCategories().get(i).getCategoryName();
+            }
+            table = new JTable(data, columnCategories);
+        }
+            return table;
+    }
+
+    @Override
+    public JTable updatePanelReport(List<CostItem> listReport) throws CostManagerException {
+        String columnItems[]={"ItemID","CateID", "Item Name","Price", "Currency", "Purchase Date"};
+        String data[][] = null;
+            data = new String[listReport.size()][6];
+            for(int i = 0; i < listReport.size(); i++) {
+                data[i][0] = String.valueOf((listReport.get(i).getItemID()));
+                data[i][1] = String.valueOf((listReport.get(i).getCateID()));
+                data[i][2] = listReport.get(i).getItemName();
+                data[i][3] = String.valueOf((listReport.get(i).getPrice()));
+                data[i][4] = String.valueOf((listReport.get(i).getEcurrency()));
+                data[i][5] = listReport.get(i).getPurchaseDate();
+            }
+        JTable table = new JTable(data, columnItems);
+        return table;
     }
 
     /**

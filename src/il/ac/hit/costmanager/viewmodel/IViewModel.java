@@ -35,11 +35,6 @@ public interface IViewModel {
     public void deleteCostItem(CostItem item);
 
     /**
-     * Load the items from database to screen
-     */
-    public void loadItems();
-
-    /**
      * Add a category
      * @param category
      */
@@ -52,15 +47,23 @@ public interface IViewModel {
     public void deleteCategory(Category category);
 
     /**
-     * Load the categories from DB to screen
+     * Load the items from DB to table on screen
      */
-    public void loadCategories();
+    public void loadItemTable();
+
+    /**
+     * Load the categories from DB to table on screen
+     */
+    public void loadCategoriesTable();
 
     /**
      * Add data to the piechart
      */
     public void getDataSetPie(Date dateTo, Date dateFrom);
 
+    /**
+     * This method will add the list of categories to the combobox at the items panel
+     */
     public void setCbItems();
 
     /**
@@ -68,6 +71,7 @@ public interface IViewModel {
      * @param dateFrom
      * @param dateTo
      */
-    public void handleReport(String dateFrom , String dateTo);
+    public void handleReport(Date dateFrom , Date dateTo);
 
-}
+
+    }
