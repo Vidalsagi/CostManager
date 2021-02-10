@@ -956,15 +956,11 @@ public class View implements IView {
         public void loadCateListToCB(List<Category> categories){
             cbItemsCate.setModel(new DefaultComboBoxModel(categories.toArray()));
             //This method will empty the combobox of categories in items tab
-                vm.loadCategoriesTable();
-                for(int i = 0; i < categories.size() - 1; i++) {
+            for(int i = 0; i < categories.size() - 1; i++) {
                     cbItemsCate.removeItemAt(0);
                 }
-            String[] cate = new String[categories.size()]; //set an array of strings to send to the combobox
-            for(int i = 0; i < categories.size();i++){
-                    cate[i] = categories.get(i).getCategoryName();
-            }
-                cbItemsCate.setModel(new DefaultComboBoxModel(cate));
+            //convert the list to array and add the array to the combobox
+                cbItemsCate.setModel(new DefaultComboBoxModel(categories.toArray()));
         }
 
         //This method will show all the available categories in db

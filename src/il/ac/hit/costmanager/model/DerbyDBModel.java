@@ -31,7 +31,7 @@ public class DerbyDBModel implements IModel{
                 if(newList.get(i).getItemName().equals(item.getItemName()) && newList.get(i).getPurchaseDate().equals(item.getPurchaseDate()))
                     throw new CostManagerException("Item Name already exsists in the same date in system.");
             }
-            //search for the categories in database to save the cateID
+            //Search for the categories in database to save the cateID
             int cateID = 1;
             for(int i = 0; i < newCateList.size();i++){
                 if(cateName.equals(newCateList.get(i).getCategoryName())){
@@ -41,7 +41,7 @@ public class DerbyDBModel implements IModel{
             }
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            statement.execute("insert into ItemDB(ITEMIDCOL,CATEIDCOL," +
+            statement.executeUpdate("insert into ItemDB(ITEMIDCOL,CATEIDCOL," +
                     "ITEMNAMECOL,CURRENCYCOL,PRICECOL,PurchaseDateCol) VALUES (" + generateItemID() + ","
                     + cateID + "," + "'" + item.getItemName() + "','" +
                     item.getEcurrency() + "'," + item.getPrice() + ",'" +
@@ -61,7 +61,7 @@ public class DerbyDBModel implements IModel{
     @Override
     public void deleteCostItem(CostItem item) throws CostManagerException {
         try {
-            //Make sure the name exsists in database
+            //Validation check, make sure the name exists in the database
             List<CostItem> newList = getAllItems();
             for(int i = 0; i < newList.size(); i++) {
                 if(newList.get(i).getItemName().equals(item.getItemName())){
@@ -79,7 +79,7 @@ public class DerbyDBModel implements IModel{
             }
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            statement.execute("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"' AND PurchaseDateCol = '" +
+            statement.executeUpdate("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"' AND PurchaseDateCol = '" +
                     item.getPurchaseDate() + "'");
         }
         catch(SQLException sqlException) {
@@ -99,7 +99,7 @@ public class DerbyDBModel implements IModel{
         {
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            statement.execute("insert into CateDB(CateIDCol,CateNameCol) VALUES (" + generateCateID()
+            statement.executeUpdate("insert into CateDB(CateIDCol,CateNameCol) VALUES (" + generateCateID()
                     + ",'" + category.getCategoryName()  + "')");
 
         }

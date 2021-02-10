@@ -38,7 +38,9 @@ public class CostItem {
      Gets the itemID
      * @return a int
      */
-    public int getItemID() {
+    public int getItemID() throws CostManagerException {
+        if(itemID < 0) throw(new CostManagerException("Error, Item ID cannot be negative!"));
+        this.itemID = itemID;
         return itemID;
     }
 
@@ -57,7 +59,8 @@ public class CostItem {
      Gets the cateID
      * @return an int
      */
-    public int getCateID() {
+    public int getCateID() throws CostManagerException {
+        if(cateID < 0) throw(new CostManagerException("Category ID cannot be negative!"));
         return cateID;
     }
 
@@ -76,7 +79,8 @@ public class CostItem {
      Gets the ItemName
      * @return an int
      */
-    public String getItemName() {
+    public String getItemName() throws CostManagerException {
+        if(itemName.isEmpty()) throw(new CostManagerException("Item name cannot be empty!"));
         return itemName;
     }
 
@@ -95,7 +99,8 @@ public class CostItem {
      Gets the ecurrency
      * @return an ecurrency
      */
-    public Currency getEcurrency() {
+    public Currency getEcurrency() throws CostManagerException {
+        if(ecurrency.toString().isEmpty()) throw(new CostManagerException("Item currency cannot be empty!"));
         return ecurrency;
     }
 
@@ -114,7 +119,8 @@ public class CostItem {
      Gets the price
      * @return an int
      */
-    public double getPrice() {
+    public double getPrice() throws CostManagerException {
+        if(price < 0) throw(new CostManagerException("Item price cannot be negative!"));
         return price;
     }
 
@@ -133,7 +139,8 @@ public class CostItem {
      Gets the purchase date
      * @return an string
      */
-    public String getPurchaseDate() {
+    public String getPurchaseDate() throws CostManagerException {
+        if(purchaseDate.isEmpty()) throw(new CostManagerException("Please enter a date."));
         return purchaseDate;
     }
 
