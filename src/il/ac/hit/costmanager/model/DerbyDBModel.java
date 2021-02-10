@@ -41,6 +41,25 @@ public class DerbyDBModel implements IModel{
             }
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
+            //Run a code to check if CateDB exists in the database
+            DatabaseMetaData metadata = metadata = connection.getMetaData();
+            String[] names = { "TABLE"};
+            ResultSet tableNames = metadata.getTables( null, null, null, names);
+            //This boolean check if the table exists in the database via name "cateDB"
+            boolean isTableExist = false;
+            while(tableNames.next())
+            {
+                if(tableNames.getString( "TABLE_NAME").equals("ITEMDB")){
+                    //Table exists
+                    isTableExist = true;
+                    break;
+                }
+            }
+            //If the table doesn't exists create it
+            if(isTableExist==false) statement.executeUpdate("create table ItemDB(ItemIDCol int, CateIDCol int," +
+                                " ItemNameCol varchar(40), CurrencyCol varchar(40), PriceCol double, " +
+                                "PurchaseDateCol varchar(40))");
+
             statement.executeUpdate("insert into ItemDB(ITEMIDCOL,CATEIDCOL," +
                     "ITEMNAMECOL,CURRENCYCOL,PRICECOL,PurchaseDateCol) VALUES (" + generateItemID() + ","
                     + cateID + "," + "'" + item.getItemName() + "','" +
@@ -79,8 +98,9 @@ public class DerbyDBModel implements IModel{
             }
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            statement.executeUpdate("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"' AND PurchaseDateCol = '" +
+            int result = statement.executeUpdate("DELETE FROM ITEMDB WHERE ItemNameCol = '" + item.getItemName()+"' AND PurchaseDateCol = '" +
                     item.getPurchaseDate() + "'");
+            if(result == 0) throw new CostManagerException("Warning delete cost item didn't work.");
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
@@ -99,9 +119,24 @@ public class DerbyDBModel implements IModel{
         {
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            statement.executeUpdate("insert into CateDB(CateIDCol,CateNameCol) VALUES (" + generateCateID()
+            //Run a code to check if CateDB exists in the database
+            DatabaseMetaData metadata = metadata = connection.getMetaData();
+            String[] names = { "TABLE"};
+            ResultSet tableNames = metadata.getTables( null, null, null, names);
+            //This boolean check if the table exists in the database via name "cateDB"
+            boolean isTableExist = false;
+            while(tableNames.next())
+            {
+                if(tableNames.getString( "TABLE_NAME").equals("CATEDB")){
+                    //Table exists
+                    isTableExist = true;
+                    break;
+                }
+            }
+            //If the table doesn't exists create it
+            if(isTableExist==false) statement.execute("create table CateDB(CateIDCol int, CateNameCol varchar(40))");
+                statement.executeUpdate("insert into CateDB(CateIDCol,CateNameCol) VALUES (" + generateCateID()
                     + ",'" + category.getCategoryName()  + "')");
-
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();
@@ -120,12 +155,11 @@ public class DerbyDBModel implements IModel{
         List<CostItem> newItemList = getAllItems();
         int cateID = 1;
         //add the cateID from the database
-        for(int i = 0; i < newList.size();i++){
+        for(int i = 0; i < newList.size();i++)
             if(category.getCategoryName().equals(newList.get(i).getCategoryName())) cateID = newList.get(i).getCategoryID();
-        }
         //Validation check
         try {
-            //Make sure the name exsists in database
+            //Make sure the name exsists in database, and save the cateID
             for(int i = 0; i < getAllCategories().size(); i++) {
                 if(category.getCategoryName().equals(newList.get(i).getCategoryName())){
                     cateID = newList.get(i).getCategoryID();
@@ -138,7 +172,7 @@ public class DerbyDBModel implements IModel{
                         break;
                     }
                     else{
-                        throw new CostManagerException("Category doesn't exsists in system.");
+                        //throw new CostManagerException("Category doesn't exsists in system.");
                     }
                 }
             }
@@ -148,11 +182,7 @@ public class DerbyDBModel implements IModel{
             }
             Connection connection = DriverManager.getConnection(protocol);
             Statement statement = connection.createStatement();
-            //=========== Run a code to check if CateDB exsists =============
-            //statement.execute("create table CateDB(CateIDCol int, CateNameCol varchar(40))");
-            statement.execute("DELETE FROM CateDB WHERE CateNameCol = '" + category.getCategoryName()+"'");
-            ResultSet rs = statement.executeQuery(
-                    "SELECT * FROM ItemDB ORDER BY CateIDCol");
+            statement.executeUpdate("DELETE FROM CateDB WHERE CateNameCol = '" + category.getCategoryName()+"'");
         }
         catch(SQLException sqlException) {
             sqlException.printStackTrace();

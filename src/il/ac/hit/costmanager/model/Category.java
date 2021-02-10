@@ -1,8 +1,5 @@
 package il.ac.hit.costmanager.model;
 
-import java.sql.PreparedStatement;
-
-
 public class Category {
 
     public String categoryName;          //The name of category

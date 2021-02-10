@@ -1,7 +1,7 @@
-Tue Feb 09 12:57:32 IST 2021 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+Wed Feb 10 22:41:55 IST 2021 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Tue Feb 09 12:57:38 IST 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0177-8670-7235-ffffa79a58a6 
+Wed Feb 10 22:42:04 IST 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0177-8dad-d303-ffffa79a58a6 
 on database directory C:\Users\Sagi\Desktop\אבן דרך 2\CostManagerApp\bin\CostManager with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@4459eb14 
 Loaded from file:/C:/Users/Sagi/Desktop/%d7%90%d7%91%d7%9f%20%d7%93%d7%a8%d7%9a%202/CostManagerApp/lib/derby.jar
 java.vendor=Amazon.com Inc.
