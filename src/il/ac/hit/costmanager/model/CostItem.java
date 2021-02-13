@@ -1,4 +1,14 @@
-//CostItem class with get and set methods
+/*
+Authors:
+
+First Name: Sagi
+Last Name: Vidal
+ID: 205657042
+
+First Name: Shlomi
+Last Name: Amir
+ID: 311403844
+ */
 package il.ac.hit.costmanager.model;
 
 
