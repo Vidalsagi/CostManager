@@ -10,17 +10,12 @@ import il.ac.hit.costmanager.viewmodel.ViewModel;
 public class CostManagerApp {
 
     /**
-     * Main program will run the application
+     * Main program that will run the application
      * @param args
      */
     public static void main(String args[]) {
-        /**
-         * @param IView
-         * @param IModel
-         * @param IViewModel
-         * view.setViewModel(vm)
-         * vm.setModel(model)
-         * vm.setView(view)
+        /*
+            Creating the app components and then connection component with each other
          */
                     //creating the application components
                     IView view = new View();

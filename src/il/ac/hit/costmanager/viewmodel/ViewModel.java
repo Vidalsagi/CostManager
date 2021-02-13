@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * This class will be the implementation of the Interface - viewmodel
+ */
 public class ViewModel implements IViewModel {
 
     private IModel model;

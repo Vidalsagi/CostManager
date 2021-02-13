@@ -8,7 +8,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
-
+/**
+ * This class will be the implementation of the Interface - IModel
+ */
 public class DerbyDBModel implements IModel{
 
     public static String driver = "org.apache.derby.jdbc.ClientDriver";
@@ -55,7 +57,7 @@ public class DerbyDBModel implements IModel{
                     break;
                 }
             }
-            //If the table doesn't exists create it
+            //If the table doesn't exists, it create it
             if(isTableExist==false) statement.executeUpdate("create table ItemDB(ItemIDCol int, CateIDCol int," +
                                 " ItemNameCol varchar(40), CurrencyCol varchar(40), PriceCol double, " +
                                 "PurchaseDateCol varchar(40))");
@@ -289,6 +291,7 @@ public class DerbyDBModel implements IModel{
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(
                     "SELECT * FROM CateDB ORDER BY CateIDCol");
+            //retrieving data for each category
             while(rs.next())
             {
                 Category category = new Category(rs.getInt("CateIDCol"),
@@ -318,19 +321,27 @@ public class DerbyDBModel implements IModel{
         List<CostItem> filteredItems = new LinkedList<>();
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         for (int i = 0; i < getAllItems().size(); i++) {
+            //check for each item if his purchase date in between the desired dates within the report
             try {
                 Date currentItemDate = format.parse(getAllItems().get(i).getPurchaseDate());
                 if (sDateFrom.before(currentItemDate) && sDateTo.after(currentItemDate) || sDateFrom.equals(currentItemDate) || sDateTo.equals(currentItemDate))
                     filteredItems.add(getAllItems().get(i));
                 }
+            //if parsing from date type to string type fails, throws appropriate exception, bad dates shouldn't be a problem because of the combobox choose method.
                 catch(ParseException e){
                     e.printStackTrace();
-                    throw new CostManagerException("Bad dates have been set");
+                    throw new CostManagerException("Failure in Parsing dates");
                 }
             }
         return filteredItems;
     }
 
+    /**
+     * This method will update the JTable that will be further shown in the Categories panel
+     * @param queryNum
+     * @return JTable
+     * @throws CostManagerException
+     */
     @Override
     public JTable updatePanelCateItem(int queryNum) throws CostManagerException {
         List<CostItem> itemList = getAllItems();
@@ -362,6 +373,12 @@ public class DerbyDBModel implements IModel{
             return table;
     }
 
+    /**
+     * * This method will update the JTable that will be further shown in the Report panel
+     * @param listReport
+     * @return JTable
+     * @throws CostManagerException
+     */
     @Override
     public JTable updatePanelReport(List<CostItem> listReport) throws CostManagerException {
         String columnItems[]={"ItemID","CateID", "Item Name","Price", "Currency", "Purchase Date"};

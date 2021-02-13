@@ -1,5 +1,8 @@
 package il.ac.hit.costmanager.model;
-
+/**
+ * This is a model class to hold a Category information
+ *
+ */
 public class Category {
 
     public String categoryName;          //The name of category

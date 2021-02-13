@@ -10,11 +10,20 @@ import org.jfree.data.general.PieDataset;
 import org.jfree.util.Rotation;
 
 //This class isn't used here, the methods work in "View" class.
+
+/**
+ * This Class will implement the functionality of the PieChart feature
+ * This class isn't used here, the methods work in "View" class.
+ */
 public class PieChart extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-
+    /**
+     * This method will send to other inner methods the dataset, chart creation and
+     * @param applicationTitle
+     * @param chartTitle
+     */
     public PieChart(String applicationTitle, String chartTitle) {
         super(applicationTitle);
         // This will create the dataset
@@ -30,7 +39,9 @@ public class PieChart extends JFrame {
 
     }
 
-    //Sample Data for the chart
+    /**
+     * SampleData for piechart
+     */
     private  PieDataset createDataset() {
         DefaultPieDataset result = new DefaultPieDataset();
         result.setValue("Food", 29);
@@ -41,7 +52,12 @@ public class PieChart extends JFrame {
 
     }
 
-    //Create  the chart
+    /**
+     * This method will create the chart
+     * @param dataset
+     * @param title
+     * @return JFreeChart
+     */
     private JFreeChart createChart(PieDataset dataset, String title) {
         JFreeChart chart = ChartFactory.createPieChart3D(
                 title,                  // chart title

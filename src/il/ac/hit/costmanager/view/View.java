@@ -19,52 +19,78 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
+/**
+ * This class will be the implementation of the Interface - IView
+ */
 public class View implements IView {
 
     private IViewModel vm;
     private ApplicationUI ui;
 
-
+    /**
+     * //This will connect the view with the viewmodel
+     * @param vm
+     */
     @Override
     public void setViewModel(IViewModel vm) {
         this.vm = vm;
-    }    //This will connect the view with the viewmodel
+    }
 
-    //This will show the report of items in selected dates
+    /**
+     * //This will show the report of items in selected dates
+     * @param itemsReportTable
+     */
     @Override
     public void showReportItems (JTable itemsReportTable){ui.showReportItems(itemsReportTable); };
 
 
-    //This func is related to piechart
+    /**
+     * //This func is related to piechart
+     * @param dataset
+     */
     @Override
     public void getPieChartDataSet(DefaultPieDataset dataset) {
         ui.showPieChart(dataset);
     }
 
-    //This func will display msgs related to errors
+    /**
+     *This func will display messages related to errors
+     * @param text
+     */
     @Override
     public void showMessage(String text) {
         ui.showMessage(text);
     }
 
+    /**
+     * this func will display items
+     * @param itemsTable
+     */
     @Override
     public void showItemsTable(JTable itemsTable) {
         ui.showItemsTable(itemsTable);
     }
 
+    /**
+     * this func will load categories into the releveant combo box upon adding a cost item.
+     * @param categories
+     */
     @Override
     public void setItemsCateCB(List<Category> categories) {
         ui.loadCateListToCB(categories);
     }
 
-    //This func will display the categories in database
+    /**This func will display the categories in database
+     *
+     * @param cateTable
+     */
     @Override
     public void showCategoriesTable(JTable cateTable) {
         ui.showCategoriesTable(cateTable);
     }
 
     public View() {
+        // run the view and his connections
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -77,6 +103,9 @@ public class View implements IView {
         });
     }
 
+    /**
+     * this class is for setting and configuring the ui components
+     */
     public class ApplicationUI //implements IView
     {
         /*
